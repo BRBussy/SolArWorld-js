@@ -1,5 +1,5 @@
 import React, {useContext, useLayoutEffect, useState} from 'react';
-import {SolanaNetwork, solanaNetworkToRPCURL} from "../../arworld/solana";
+import {SolanaNetwork, solanaNetworkToRPCURL} from "../../solArWorld/solana";
 
 import {Connection} from '@solana/web3.js'
 

@@ -72,7 +72,7 @@ export default function SmartContracts() {
 
     return (
         <>
-            <Card className={cx(classes.content, 'arWorldScroll')}>
+            <Card className={cx(classes.content, 'solArWorldScroll')}>
                 <Grid container className={classes.tabBarWrapper}>
                     <Grid item>
                         <Tabs

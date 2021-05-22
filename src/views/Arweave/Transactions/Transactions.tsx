@@ -197,7 +197,7 @@ export default function Transactions() {
                                             color={'textSecondary'}
                                             children={'By Name-Value Pair (e.g. Content-Type - text/html)'}
                                         />
-                                        <div className={cx(classes.kvWrapper, 'arWorldScroll')}>
+                                        <div className={cx(classes.kvWrapper, 'solArWorldScroll')}>
                                             {keyValuePairs.length
                                                 ? keyValuePairs.map((kvPair, idx) => (
                                                     <div className={classes.kvLineItem} key={idx}>

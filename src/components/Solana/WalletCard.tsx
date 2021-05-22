@@ -13,7 +13,7 @@ import {makeStyles} from "@material-ui/core/styles";
 import DropZrone from "../../components/DropZone";
 import {useSnackbar} from "notistack";
 import {useWalletContext} from "../../context/Wallet";
-import {Wallet} from "../../arworld";
+import {Wallet} from "../../solArWorld";
 import {SolanaAccountCard} from "../../components/Solana";
 
 import {
@@ -21,7 +21,7 @@ import {
     Opacity as AirDropIcon,
 } from '@material-ui/icons';
 import {useSolanaContext} from "../../context/Solana";
-import {SolanaNetwork, SolanaKey, AllSolanaNetworks} from "../../arworld/solana";
+import {SolanaNetwork, SolanaKey, AllSolanaNetworks} from "../../solArWorld/solana";
 import {Keypair, LAMPORTS_PER_SOL} from "@solana/web3.js";
 
 const useStyles = makeStyles((theme) => ({

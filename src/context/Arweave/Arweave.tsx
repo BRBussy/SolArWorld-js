@@ -1,5 +1,5 @@
 import React, {useContext, useRef} from 'react';
-import {ArweaveClient, ArweaveGQLClient} from '../../arworld/arweave';
+import {ArweaveClient, ArweaveGQLClient} from '../../solArWorld/arweave';
 
 // //
 // // uncomment for testing

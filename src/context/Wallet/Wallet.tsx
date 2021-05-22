@@ -1,6 +1,6 @@
 import React, {useContext, useLayoutEffect, useState} from 'react';
-import Wallet from "../../arworld/Wallet";
-import {SolanaKey} from "../../arworld/solana";
+import Wallet from "../../solArWorld/Wallet";
+import {SolanaKey} from "../../solArWorld/solana";
 import {Keypair} from "@solana/web3.js";
 
 interface ContextType {

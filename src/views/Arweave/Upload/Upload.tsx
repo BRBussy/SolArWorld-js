@@ -18,7 +18,7 @@ import {
     ExpandMore as MenuIcon,
 } from "@material-ui/icons";
 import {useArweaveContext} from "../../../context/Arweave";
-import {ArWorldScrollClassName, commonTagNameValues, commonTagValueValues} from "../../../common";
+import {SolArWorldScrollClassName, commonTagNameValues, commonTagValueValues} from "../../../common";
 import Popover from "../../../components/PopOver/Popover";
 import {useSnackbar} from "notistack";
 import TransactionStatus from "../../../components/Arweave/TransactionStatus";
@@ -210,7 +210,7 @@ export default function Upload() {
                                                     color={'textSecondary'}
                                                     children={'Add Name-Value Pairs (e.g. Content-Type - text/html)'}
                                                 />
-                                                <div className={cx(classes.kvWrapper, ArWorldScrollClassName)}>
+                                                <div className={cx(classes.kvWrapper, SolArWorldScrollClassName)}>
                                                     {keyValuePairs.length
                                                         ? keyValuePairs.map((kvPair, idx) => (
                                                             <div className={classes.kvLineItem} key={idx}>
@@ -448,7 +448,7 @@ export default function Upload() {
                                             // disabled={apiLoading}
                                             value={dataToPersist}
                                             onChange={(e) => setDataToPersist(e.target.value)}
-                                            className={cx(classes.transactionDataTextArea, ArWorldScrollClassName)}
+                                            className={cx(classes.transactionDataTextArea, SolArWorldScrollClassName)}
                                         />
                                         <Typography
                                             variant={'body2'}

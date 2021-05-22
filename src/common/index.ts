@@ -1,4 +1,4 @@
-export const ArWorldScrollClassName = 'arWorldScroll'
+export const SolArWorldScrollClassName = 'solArWorldScroll'
 
 export const commonTagNameValues: string[] = [
     'Content-Type', 'User-Agent'

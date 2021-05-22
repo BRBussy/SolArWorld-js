@@ -15,14 +15,14 @@ import {useSnackbar} from "notistack";
 import {useWalletContext} from "../../context/Wallet";
 import {useArweaveContext} from "../../context/Arweave";
 import {JWKInterface} from "arweave/web/lib/wallet";
-import {Wallet} from "../../arworld";
-import {ArweaveKey} from "../../arworld/arweave";
+import {Wallet} from "../../solArWorld";
+import {ArweaveKey} from "../../solArWorld/arweave";
 import {ArweaveAccountCard} from "../../components/Arweave";
 import {
     DeleteOutline as DeleteAccountIcon,
     Opacity as AirDropIcon,
 } from '@material-ui/icons';
-import {TestNetClient} from "../../arworld/arweave/TestNetClient";
+import {TestNetClient} from "../../solArWorld/arweave/TestNetClient";
 
 const useStyles = makeStyles((theme) => ({
     viewRoot: {

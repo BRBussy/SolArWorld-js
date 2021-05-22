@@ -20,7 +20,7 @@ import {
 } from '@material-ui/icons';
 import cx from 'classnames';
 import {useColorContext} from '../../context/Color';
-import {ArweaveKey} from "../../arworld";
+import {ArweaveKey} from "../../solArWorld";
 import {useArweaveContext} from '../../context/Arweave';
 
 const useStyles = makeStyles((theme: Theme) => ({

@@ -115,7 +115,7 @@ export default function FETable(props: FETableProps) {
                 </div>
             </Collapse>}
             <div
-                className={cx(classes.tableWrapper, 'arWorldScroll')}
+                className={cx(classes.tableWrapper, 'solArWorldScroll')}
                 style={{height: tableWrapperHeight}}
             >
                 <Table

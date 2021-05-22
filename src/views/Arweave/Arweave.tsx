@@ -97,13 +97,13 @@ export default function Arweave() {
                     {usingArweaveTestNet &&
                     <Grid item>
                         <Typography>
-                            !!! USING ARWORLD TEST NET !!!
+                            !!! USING SolArWorld TEST NET !!!
                         </Typography>
                     </Grid>
                     }
                 </Grid>
             </Paper>
-            <div className={cx(classes.content, 'arWorldScroll')}>
+            <div className={cx(classes.content, 'solArWorldScroll')}>
                 <Router routes={availableTabRoutes}/>
             </div>
         </>

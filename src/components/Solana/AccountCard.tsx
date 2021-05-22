@@ -21,7 +21,7 @@ import {
 import cx from 'classnames';
 import {useColorContext} from '../../context/Color';
 import {useSolanaContext} from '../../context/Solana';
-import {SolanaKey} from '../../arworld/solana'
+import {SolanaKey} from '../../solArWorld/solana'
 import {LAMPORTS_PER_SOL} from "@solana/web3.js";
 
 const useStyles = makeStyles((theme: Theme) => ({

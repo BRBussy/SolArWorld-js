@@ -94,7 +94,7 @@ export default function Solana() {
                     </Grid>
                 </Grid>
             </Paper>
-            <div className={cx(classes.content, 'arWorldScroll')}>
+            <div className={cx(classes.content, 'solArWorldScroll')}>
                 <Router routes={availableTabRoutes}/>
             </div>
         </>
