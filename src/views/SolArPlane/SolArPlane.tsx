@@ -19,9 +19,9 @@ const useStyles = makeStyles((theme) => ({
 
 const solArPlaneTabRoutes: RouteType[] = [
     {
-        name: 'Smart Contracts',
-        id: 'solArPlane-builder',
-        path: '/solArPlane/builder',
+        name: 'Build',
+        id: 'solArPlane-build',
+        path: '/solArPlane/build',
         component: Build,
         allowSubPaths: true
     },
