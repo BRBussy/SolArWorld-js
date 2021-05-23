@@ -49,8 +49,8 @@ const onRender = (scene: Scene) => {
 const useStyles = makeStyles((theme: Theme) => ({
     root: {},
     canvas: {
-        width: 'calc(100vw - 200px)',
-        height: 'calc(100vh- 200px)',
+        width: 'calc(100vw - 260px)',
+        height: 'calc(100vh - 54px)',
     }
 }))
 
