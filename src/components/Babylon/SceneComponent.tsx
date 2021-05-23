@@ -1,5 +1,5 @@
 import {Engine, EngineOptions, Scene, SceneOptions} from "@babylonjs/core";
-import React, {useEffect, useRef} from "react";
+import React, {useLayoutEffect, useRef} from "react";
 
 export interface SceneComponentProps {
     antialias?: boolean,
@@ -10,14 +10,18 @@ export interface SceneComponentProps {
     onSceneReady: (scene: Scene) => void;
 }
 
-export default (props: SceneComponentProps) => {
+const SceneComponent = (props: SceneComponentProps) => {
     const reactCanvas = useRef(null);
-    const {antialias, engineOptions, adaptToDeviceRatio, sceneOptions, onRender, onSceneReady, ...rest} = props;
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (reactCanvas.current) {
-            const engine = new Engine(reactCanvas.current, antialias, engineOptions, adaptToDeviceRatio);
-            const scene = new Scene(engine, sceneOptions);
+            const engine = new Engine(
+                reactCanvas.current,
+                props.antialias,
+                props.engineOptions,
+                props.adaptToDeviceRatio,
+            );
+            const scene = new Scene(engine, props.sceneOptions);
             if (scene.isReady()) {
                 props.onSceneReady(scene);
             } else {
@@ -25,8 +29,8 @@ export default (props: SceneComponentProps) => {
             }
 
             engine.runRenderLoop(() => {
-                if (typeof onRender === "function") {
-                    onRender(scene);
+                if (typeof props.onRender === "function") {
+                    props.onRender(scene);
                 }
                 scene.render();
             });
@@ -47,7 +51,12 @@ export default (props: SceneComponentProps) => {
                 }
             };
         }
-    }, [reactCanvas]);
+    }, [
+        reactCanvas,
+        props,
+    ]);
 
-    return <canvas ref={reactCanvas} {...rest} />;
+    return <canvas ref={reactCanvas}/>;
 };
+
+export default SceneComponent;
