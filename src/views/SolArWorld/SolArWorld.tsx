@@ -1,6 +1,8 @@
 import React from "react";
 import {FreeCamera, Vector3, HemisphericLight, MeshBuilder, Scene} from "@babylonjs/core";
-import {SceneComponent} from "../../components/Babylon"; // uses above component in same directory
+import {SceneComponent} from "../../components/Babylon";
+import {makeStyles} from "@material-ui/core/styles";
+import {Theme} from "@material-ui/core"; // uses above component in same directory
 
 let box: any;
 
@@ -44,12 +46,25 @@ const onRender = (scene: Scene) => {
     }
 };
 
-export default () => (
-    <div>
-        <SceneComponent
-            antialias
-            onSceneReady={onSceneReady}
-            onRender={onRender}
-        />
-    </div>
-);
+const useStyles = makeStyles((theme: Theme) => ({
+    root: {},
+    canvas: {
+        width: 'calc(100vw - 200px)',
+        height: 'calc(100vh- 200px)',
+    }
+}))
+
+export default function SolArWorld() {
+    const classes = useStyles();
+
+    return (
+        <div className={classes.root}>
+            <SceneComponent
+                canvasClassName={classes.canvas}
+                antialias
+                onSceneReady={onSceneReady}
+                onRender={onRender}
+            />
+        </div>
+    )
+};
