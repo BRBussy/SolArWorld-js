@@ -8,6 +8,7 @@ export interface SceneComponentProps {
     sceneOptions?: SceneOptions,
     onRender?: (scene: Scene) => void;
     onSceneReady: (scene: Scene) => void;
+    canvasClassName?: string;
 }
 
 const SceneComponent = (props: SceneComponentProps) => {
@@ -56,7 +57,12 @@ const SceneComponent = (props: SceneComponentProps) => {
         props,
     ]);
 
-    return <canvas ref={reactCanvas}/>;
+    return (
+        <canvas
+            ref={reactCanvas}
+            className={props.canvasClassName}
+        />
+    );
 };
 
 export default SceneComponent;
