@@ -3,12 +3,14 @@ import {
     AccountBalanceWallet as WalletIcon,
     Storage as ARWeaveIcon,
     Settings as SolanaIcon,
-    MapSharp as SolArPlaneIcon
+    MapSharp as SolArPlaneIcon,
+    LanguageSharp as SolArWorldIcon
 } from '@material-ui/icons';
 import Wallet from '../views/Wallet';
 import Arweave from '../views/Arweave';
 import Solana from '../views/Solana';
 import SolArPlane from '../views/SolArPlane';
+import SolArWorld from "../views/SolArWorld";
 
 export const defaultRoute: RouteType = {
     name: 'Wallet',
@@ -43,5 +45,12 @@ export const publicRoutes: RouteType[] = [
         component: SolArPlane,
         icon: SolArPlaneIcon,
         allowSubPaths: true
+    },
+    {
+        name: 'SolArWorld',
+        id: 'solArWorld',
+        path: '/solArWorld',
+        component: SolArWorld,
+        icon: SolArWorldIcon
     },
 ]
