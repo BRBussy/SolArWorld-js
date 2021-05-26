@@ -3,6 +3,7 @@ import BN from "bn.js";
 
 export type MintPositiveLandPiecesParams = {
     landProgramID: PublicKey;
+    nftTokenAccOwnerAccPubKey: PublicKey;
 }
 
 export interface LandProgramSmartContract {
@@ -14,6 +15,19 @@ export const LandProgram: LandProgramSmartContract = {
         return new TransactionInstruction({
             programId: params.landProgramID,
             keys: [
+                // 1st
+                // Addresses requiring signatures are 1st, and in the following order:
+                //
+                // those that require write access
+                // those that require read-only access
+
+                // 2nd
+                // Addresses not requiring signatures are 2nd, and in the following order:
+                //
+                // those that require write access
+                // those that require read-only access
+
+
                 // { pubkey: initializerAccount.publicKey, isSigner: true, isWritable: false },
                 // { pubkey: tempTokenAccount.publicKey, isSigner: false, isWritable: true },
                 // { pubkey: new PublicKey(initializerReceivingTokenAccountPubkeyString), isSigner: false, isWritable: false },
