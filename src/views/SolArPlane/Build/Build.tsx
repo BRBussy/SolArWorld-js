@@ -5,6 +5,7 @@ import {
     makeStyles, TextField,
 } from "@material-ui/core";
 import {useSolanaContext} from "../../../context/Solana";
+import {PublicKey} from "@solana/web3.js";
 
 const useStyles = makeStyles((theme) => ({
     field: {
@@ -53,7 +54,25 @@ export default function Build() {
                     color={'primary'}
                     children={'TEST EM'}
                     onClick={async () => {
-                        console.log('awe!')
+                        console.log('-----------------------click!-----------------------')
+                        // 3PUZ7N2hA4ftZ2W68e6WdEjJJH8FMMhijKFNJWyEtgyA
+                        if (!solanaRPCConnection) {
+                            return;
+                        }
+                        try {
+                            const pubKey = new PublicKey('3PUZ7N2hA4ftZ2W68e6WdEjJJH8FMMhijKFNJWyEtgyA');
+                            console.log(pubKey)
+                            const accInfo = await solanaRPCConnection.getAccountInfo(pubKey)
+                            console.log(accInfo)
+                            const accInfoAndCtx = await solanaRPCConnection.getAccountInfoAndContext(pubKey)
+                            console.log(accInfoAndCtx)
+                            const parsedAccInfo = await solanaRPCConnection.getParsedAccountInfo(pubKey)
+                            console.log(parsedAccInfo)
+                            const parsedProgramAccs = await solanaRPCConnection.getParsedProgramAccounts(pubKey);
+                            console.log(parsedProgramAccs)
+                        } catch (e) {
+                            console.log(`error doing thing! ${e}`)
+                        }
                     }}
                 />
             </CardContent>

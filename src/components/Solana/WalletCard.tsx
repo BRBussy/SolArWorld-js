@@ -64,7 +64,10 @@ export default function WalletCard() {
     const {solanaRPCConnection, solanaNetwork, setSolanaNetwork} = useSolanaContext();
     const [apiLoading, setAPILoading] = useState(false);
 
-    const usingTestNet = solanaNetwork === SolanaNetwork.Testnet;
+    const usingTestNet = (
+        solanaNetwork === SolanaNetwork.Testnet ||
+        solanaNetwork === SolanaNetwork.LocalTestnet
+    );
 
     return (
         <div className={classes.viewRoot}>
