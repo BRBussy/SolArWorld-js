@@ -7,6 +7,7 @@ import {
 import {useSolanaContext} from "../../../context/Solana";
 import {SystemInstruction, SystemProgram, Keypair, PublicKey, LAMPORTS_PER_SOL, Transaction} from "@solana/web3.js";
 import {useWalletContext} from "../../../context/Wallet";
+import {LandProgram} from "../../../solArWorld/solana/smartContracts";
 
 const useStyles = makeStyles((theme) => ({
     field: {
@@ -144,29 +145,24 @@ export default function Build() {
 
                             console.log(`create acc: ${testNewAccKP.publicKey}`)
 
-                            // prepare a create account instruction
-                            const createAccInstruction = SystemProgram.createAccount({
-                                // The account that will transfer lamports to the created account
-                                fromPubkey: wallet.solanaKeys[0].solanaKeyPair.publicKey,
-                                // public key of the acc to be created
-                                newAccountPubkey: testNewAccKP.publicKey,
-                                // no. of lamports for new acc
-                                lamports: 2 * LAMPORTS_PER_SOL,
-                                // no of bytes to allocate to acc
-                                space: 1,
-                                // program that owns the acc
-                                programId: programPubKey,
-                            })
+                            // prepare a land program instruction
+                            const landProgramInstruction = LandProgram.mintPositiveLandPieces({
+                                landProgramID: programPubKey
+                            });
 
                             // create a new transaction
                             // and add instructions
-                            const txn = (new Transaction()).add(createAccInstruction);
+                            const txn = (new Transaction()).add(landProgramInstruction);
 
                             const someResult = await solanaRPCConnection.sendTransaction(
                                 txn,
-                                [wallet.solanaKeys[0].solanaKeyPair, testNewAccKP],
+                                // [wallet.solanaKeys[0].solanaKeyPair, testNewAccKP],
+                                [],
                                 {skipPreflight: false, preflightCommitment: 'finalized'},
                             );
+
+                            console.log(someResult)
+
                             await solanaRPCConnection.confirmTransaction(someResult);
 
                             console.log('done!')
