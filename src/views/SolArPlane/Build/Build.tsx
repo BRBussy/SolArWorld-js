@@ -5,7 +5,15 @@ import {
     makeStyles, TextField,
 } from "@material-ui/core";
 import {useSolanaContext} from "../../../context/Solana";
-import {SystemInstruction, SystemProgram, Keypair, PublicKey, LAMPORTS_PER_SOL, Transaction} from "@solana/web3.js";
+import {
+    SystemInstruction,
+    SystemProgram,
+    Keypair,
+    PublicKey,
+    LAMPORTS_PER_SOL,
+    Transaction,
+    Logs, Context
+} from "@solana/web3.js";
 import {useWalletContext} from "../../../context/Wallet";
 import {LandProgram} from "../../../solArWorld/solana/smartContracts";
 
@@ -145,6 +153,14 @@ export default function Build() {
                             //
                             // console.log(`thing to do here: ${testNewAccKP.publicKey}`)
 
+                            // subscribe to logs
+                            const subNo = solanaRPCConnection.onLogs(
+                                'all',
+                                (logs: Logs, ctx: Context) => {
+                                    console.log('things here?', logs, ctx)
+                                }
+                            )
+
                             // prepare a land program instruction
                             const landProgramInstruction = LandProgram.mintPositiveLandPieces({
                                 landProgramID: programPubKey,
@@ -164,6 +180,8 @@ export default function Build() {
                             console.log(someResult)
 
                             await solanaRPCConnection.confirmTransaction(someResult);
+
+                            await solanaRPCConnection.removeOnLogsListener(subNo)
 
                             console.log('done!')
                         } catch (e) {
