@@ -20,6 +20,7 @@ export const LandProgram: LandProgramSmartContract = {
                 //
                 // those that require write access
                 // those that require read-only access
+                {pubkey: params.nftTokenAccOwnerAccPubKey, isSigner: true, isWritable: false},
 
                 // 2nd
                 // Addresses not requiring signatures are 2nd, and in the following order:

@@ -140,10 +140,10 @@ export default function Build() {
                             // parse program public key
                             const programPubKey = new PublicKey('3PUZ7N2hA4ftZ2W68e6WdEjJJH8FMMhijKFNJWyEtgyA');
 
-                            // prepare a key pair for a new acc
-                            const testNewAccKP = Keypair.generate();
-
-                            console.log(`create acc: ${testNewAccKP.publicKey}`)
+                            // // prepare a key pair for a new acc
+                            // const testNewAccKP = Keypair.generate();
+                            //
+                            // console.log(`thing to do here: ${testNewAccKP.publicKey}`)
 
                             // prepare a land program instruction
                             const landProgramInstruction = LandProgram.mintPositiveLandPieces({
@@ -157,8 +157,7 @@ export default function Build() {
 
                             const someResult = await solanaRPCConnection.sendTransaction(
                                 txn,
-                                // [wallet.solanaKeys[0].solanaKeyPair, testNewAccKP],
-                                [],
+                                [wallet.solanaKeys[0].solanaKeyPair],
                                 {skipPreflight: false, preflightCommitment: 'finalized'},
                             );
 
