@@ -13,7 +13,8 @@ const Context = React.createContext({} as ContextType);
 
 function SolanaContext({children}: { children?: React.ReactNode }) {
 
-    const [solanaNetwork, setSolanaNetwork] = useState<SolanaNetwork>(SolanaNetwork.MainnetBeta);
+    // const [solanaNetwork, setSolanaNetwork] = useState<SolanaNetwork>(SolanaNetwork.MainnetBeta); FIXME: mainnet to be default
+    const [solanaNetwork, setSolanaNetwork] = useState<SolanaNetwork>(SolanaNetwork.LocalTestnet);
     const [solanaRPCConnection, setSolanaRPCConnection] = useState<Connection | undefined>(undefined);
     useLayoutEffect(() => {
         (async () => {
