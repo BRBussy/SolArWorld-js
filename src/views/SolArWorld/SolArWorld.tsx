@@ -1,5 +1,5 @@
 import React from "react";
-import {FreeCamera, Vector3, HemisphericLight, MeshBuilder, Scene} from "@babylonjs/core";
+import {FreeCamera, Vector3, ArcRotateCamera, HemisphericLight, MeshBuilder, Scene} from "@babylonjs/core";
 import {SceneComponent} from "../../components/Babylon";
 import {makeStyles} from "@material-ui/core/styles";
 import {Theme} from "@material-ui/core"; // uses above component in same directory

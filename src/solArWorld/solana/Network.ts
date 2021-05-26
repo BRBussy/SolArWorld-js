@@ -9,6 +9,7 @@ export const AllNetworks: Network[] = [
     Network.MainnetBeta,
     Network.Testnet,
     Network.Devnet,
+    Network.LocalTestnet,
 ]
 
 export function networkToRPCURL(n: Network): string {

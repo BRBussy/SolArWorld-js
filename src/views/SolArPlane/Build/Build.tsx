@@ -1,8 +1,10 @@
 import React from "react";
 import {
+    Button,
     Card, CardContent,
     makeStyles, TextField,
 } from "@material-ui/core";
+import {useSolanaContext} from "../../../context/Solana";
 
 const useStyles = makeStyles((theme) => ({
     field: {
@@ -12,6 +14,13 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Build() {
     const classes = useStyles();
+
+    const {solanaRPCConnection} = useSolanaContext();
+    if (!solanaRPCConnection) {
+        return (
+            <div>solana rpc connection not set</div>
+        )
+    }
 
     return (
         <Card>
@@ -38,6 +47,14 @@ export default function Build() {
                     className={classes.field}
                     label={'PLP_X_Y Decorator Acc.'}
                     placeholder={'e.g. 6TkKqq15wXjqEjNg9zqTKADwuVATR9dW3rkNnsYme1ea'}
+                />
+                <Button
+                    variant={'contained'}
+                    color={'primary'}
+                    children={'TEST EM'}
+                    onClick={async () => {
+                        console.log('awe!')
+                    }}
                 />
             </CardContent>
         </Card>
