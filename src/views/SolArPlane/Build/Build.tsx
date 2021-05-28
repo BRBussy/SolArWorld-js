@@ -141,52 +141,54 @@ export default function Build() {
                                     const landProgramPublicKey = new PublicKey(landProgramID);
 
                                     // generate a keypair for the new land plane account
-                                    const newAccKP = Keypair.generate();
+                                    const newLandPlaneAccountKP = Keypair.generate();
 
                                     // prepare a system program instruction to create the new land plane account
                                     const createNewLandPlaneAccInstruction = SystemProgram.createAccount({
                                         // new account to be owned by the land program
                                         programId: landProgramPublicKey,
+                                        // no of bytes to allocate to acc
                                         space: 1,
+                                        // no. of lamports for new acc
                                         lamports: await solanaRPCConnection.getMinimumBalanceForRentExemption(
                                             1,
                                             'singleGossip',
                                         ),
+                                        // The account that will transfer lamports to the created account
                                         fromPubkey: wallet.solanaKeys[0].solanaKeyPair.publicKey,
-                                        newAccountPubkey: newAccKP.publicKey
+                                        // public key of the acc to be created
+                                        newAccountPubkey: newLandPlaneAccountKP.publicKey
                                     });
-
-                                    // subscribe to logs
-                                    const subNo = solanaRPCConnection.onLogs(
-                                        'all',
-                                        (logs: Logs, ctx: Context) => {
-                                            console.log('things here?', logs, ctx)
-                                        }
-                                    )
-
-                                    // // prepare a land program instruction
-                                    // const landProgramInstruction = LandProgram.mintLandPieces({
-                                    //     landProgramID: programPubKey,
-                                    //     nftTokenAccOwnerAccPubKey: wallet.solanaKeys[0].solanaKeyPair.publicKey
-                                    // });
 
                                     // create a new transaction
                                     // and add instructions
                                     const txn = (new Transaction()).add(createNewLandPlaneAccInstruction);
 
-                                    const someResult = await solanaRPCConnection.sendTransaction(
+                                    // subscribe to logs
+                                    const subNo = solanaRPCConnection.onLogs(
+                                        'all',
+                                        (logs: Logs, ctx: Context) => {
+                                            console.debug(`slot no. ${ctx.slot}`)
+                                            if (logs.err) {
+                                                console.error(logs.err.toString())
+                                            }
+                                            logs.logs.forEach((l) => console.debug(l));
+                                        }
+                                    )
+
+                                    // sign and submit transaction
+                                    const result = await solanaRPCConnection.sendTransaction(
                                         txn,
-                                        [wallet.solanaKeys[0].solanaKeyPair],
+                                        [wallet.solanaKeys[0].solanaKeyPair, newLandPlaneAccountKP],
                                         {skipPreflight: false, preflightCommitment: 'finalized'},
                                     );
+                                    console.debug(result)
 
-                                    console.log(someResult)
+                                    // wait for confirmation
+                                    await solanaRPCConnection.confirmTransaction(result);
 
-                                    await solanaRPCConnection.confirmTransaction(someResult);
-
-                                    await solanaRPCConnection.removeOnLogsListener(subNo)
-
-                                    console.log('done!')
+                                    // unsubscribe from logs
+                                    await solanaRPCConnection.removeOnLogsListener(subNo);
                                 } catch (e) {
                                     console.log(`error doing thing! ${e}`)
                                 }
