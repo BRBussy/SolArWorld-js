@@ -28,6 +28,7 @@ export default function Build() {
     const {wallet} = useWalletContext();
     const {solanaRPCConnection} = useSolanaContext();
     const [landProgramID, setLandProgramID] = useState('3PUZ7N2hA4ftZ2W68e6WdEjJJH8FMMhijKFNJWyEtgyA');
+    const [newLandPlaneAccountKP, setNewLandPlaneAccountKP] = useState<Keypair | null>(null);
 
     return (
         <Card>
@@ -129,7 +130,7 @@ export default function Build() {
                         <Button
                             variant={'contained'}
                             color={'primary'}
-                            children={'Landio!'}
+                            children={'Initialise Land Acc'}
                             onClick={async () => {
                                 console.log('-----------------------click!-----------------------')
                                 if (!solanaRPCConnection) {
@@ -137,12 +138,23 @@ export default function Build() {
                                 }
                                 try {
                                     // parse program public key
-                                    const programPubKey = new PublicKey('3PUZ7N2hA4ftZ2W68e6WdEjJJH8FMMhijKFNJWyEtgyA');
+                                    const landProgramPublicKey = new PublicKey(landProgramID);
 
-                                    // // prepare a key pair for a new acc
-                                    // const testNewAccKP = Keypair.generate();
-                                    //
-                                    // console.log(`thing to do here: ${testNewAccKP.publicKey}`)
+                                    // generate a keypair for the new land plane account
+                                    const newAccKP = Keypair.generate();
+
+                                    // prepare a system program instruction to create the new land plane account
+                                    const createNewLandPlaneAccInstruction = SystemProgram.createAccount({
+                                        // new account to be owned by the land program
+                                        programId: landProgramPublicKey,
+                                        space: 1,
+                                        lamports: await solanaRPCConnection.getMinimumBalanceForRentExemption(
+                                            1,
+                                            'singleGossip',
+                                        ),
+                                        fromPubkey: wallet.solanaKeys[0].solanaKeyPair.publicKey,
+                                        newAccountPubkey: newAccKP.publicKey
+                                    });
 
                                     // subscribe to logs
                                     const subNo = solanaRPCConnection.onLogs(
@@ -152,15 +164,15 @@ export default function Build() {
                                         }
                                     )
 
-                                    // prepare a land program instruction
-                                    const landProgramInstruction = LandProgram.mintLandPieces({
-                                        landProgramID: programPubKey,
-                                        nftTokenAccOwnerAccPubKey: wallet.solanaKeys[0].solanaKeyPair.publicKey
-                                    });
+                                    // // prepare a land program instruction
+                                    // const landProgramInstruction = LandProgram.mintLandPieces({
+                                    //     landProgramID: programPubKey,
+                                    //     nftTokenAccOwnerAccPubKey: wallet.solanaKeys[0].solanaKeyPair.publicKey
+                                    // });
 
                                     // create a new transaction
                                     // and add instructions
-                                    const txn = (new Transaction()).add(landProgramInstruction);
+                                    const txn = (new Transaction()).add(createNewLandPlaneAccInstruction);
 
                                     const someResult = await solanaRPCConnection.sendTransaction(
                                         txn,
