@@ -1,4 +1,4 @@
-import {PublicKey, TransactionInstruction} from "@solana/web3.js";
+import {PublicKey, SYSVAR_RENT_PUBKEY, TransactionInstruction} from "@solana/web3.js";
 import BN from "bn.js";
 
 export type InitialiseLandPlaneAccountParams = {
@@ -37,6 +37,7 @@ export const LandProgram: LandProgramSmartContract = {
                 // those that require write access
                 {pubkey: params.landPlaneAccountToInitialise, isSigner: false, isWritable: true},
                 // those that require read-only access
+                { pubkey: SYSVAR_RENT_PUBKEY, isSigner: false, isWritable: false},
             ],
             data: Buffer.from(Uint8Array.of(0, ...new BN(0).toArray("le", 8)))
         })
