@@ -39,7 +39,7 @@ export const LandProgram: LandProgramSmartContract = {
                 // those that require read-only access
                 { pubkey: SYSVAR_RENT_PUBKEY, isSigner: false, isWritable: false},
             ],
-            data: Buffer.from(Uint8Array.of(0, ...new BN(0).toArray("le", 8)))
+            data: Buffer.from(Uint8Array.from([0]))
         })
     },
     mintLandPieces(params: MintLandPiecesParams): TransactionInstruction {
