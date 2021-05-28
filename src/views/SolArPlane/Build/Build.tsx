@@ -170,7 +170,9 @@ export default function Build() {
                                     })
 
                                     // create a new transaction and add instructions
-                                    const txn = (new Transaction()).add(createNewLandPlaneAccInstruction);
+                                    const txn = (new Transaction())
+                                        .add(createNewLandPlaneAccInstruction)
+                                        .add(initialiseNewLandAcc);
 
                                     // subscribe to logs
                                     const subNo = solanaRPCConnection.onLogs(
