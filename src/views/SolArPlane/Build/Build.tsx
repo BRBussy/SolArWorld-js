@@ -163,8 +163,7 @@ export default function Build() {
                                         newAccountPubkey: newLandPlaneAccountKP.publicKey
                                     });
 
-                                    // create a new transaction
-                                    // and add instructions
+                                    // create a new transaction and add instructions
                                     const txn = (new Transaction()).add(createNewLandPlaneAccInstruction);
 
                                     // subscribe to logs
@@ -180,15 +179,15 @@ export default function Build() {
                                     )
 
                                     // sign and submit transaction
-                                    const result = await solanaRPCConnection.sendTransaction(
+                                    const txnSignature = await solanaRPCConnection.sendTransaction(
                                         txn,
                                         [wallet.solanaKeys[0].solanaKeyPair, newLandPlaneAccountKP],
                                         {skipPreflight: false, preflightCommitment: 'finalized'},
                                     );
-                                    console.debug(result)
+                                    console.debug(`txn signature ${txnSignature}`)
 
                                     // wait for confirmation
-                                    await solanaRPCConnection.confirmTransaction(result);
+                                    await solanaRPCConnection.confirmTransaction(txnSignature);
 
                                     // unsubscribe from logs
                                     await solanaRPCConnection.removeOnLogsListener(subNo);
