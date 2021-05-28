@@ -27,6 +27,7 @@ export default function Build() {
     const classes = useStyles();
     const {wallet} = useWalletContext();
     const {solanaRPCConnection} = useSolanaContext();
+    const [apiLoading, setAPILoading] = useState(false);
     const [landProgramID, setLandProgramID] = useState('3PUZ7N2hA4ftZ2W68e6WdEjJJH8FMMhijKFNJWyEtgyA');
     const [newLandPlaneAccountKP, setNewLandPlaneAccountKP] = useState<Keypair | null>(null);
 
@@ -132,10 +133,12 @@ export default function Build() {
                             color={'primary'}
                             children={'Initialise Land Acc'}
                             onClick={async () => {
-                                console.log('-----------------------click!-----------------------')
                                 if (!solanaRPCConnection) {
                                     return;
                                 }
+
+                                setAPILoading(true);
+
                                 try {
                                     // parse program public key
                                     const landProgramPublicKey = new PublicKey(landProgramID);
@@ -190,8 +193,10 @@ export default function Build() {
                                     // unsubscribe from logs
                                     await solanaRPCConnection.removeOnLogsListener(subNo);
                                 } catch (e) {
-                                    console.log(`error doing thing! ${e}`)
+                                    console.log(`error initialising a new land plane account: ${e}`)
                                 }
+
+                                setAPILoading(true);
                             }}
                         />
                     </Grid>
