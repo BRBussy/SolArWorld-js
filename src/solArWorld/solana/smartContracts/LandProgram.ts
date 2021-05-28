@@ -6,14 +6,15 @@ export type InitialiseLandPlaneAccountParams = {
     nftTokenAccOwnerAccPubKey: PublicKey;
 }
 
-export type MintPositiveLandPiecesParams = {
+export type MintLandPiecesParams = {
     landProgramID: PublicKey;
     nftTokenAccOwnerAccPubKey: PublicKey;
 }
 
 export interface LandProgramSmartContract {
     initialiseLandPlaneAccount(params: InitialiseLandPlaneAccountParams): TransactionInstruction;
-    mintLandPieces(params: MintPositiveLandPiecesParams): TransactionInstruction;
+
+    mintLandPieces(params: MintLandPiecesParams): TransactionInstruction;
 }
 
 export const LandProgram: LandProgramSmartContract = {
@@ -45,7 +46,7 @@ export const LandProgram: LandProgramSmartContract = {
             data: Buffer.from(Uint8Array.of(0, ...new BN(1).toArray("le", 8)))
         })
     },
-    mintLandPieces(params: MintPositiveLandPiecesParams): TransactionInstruction {
+    mintLandPieces(params: MintLandPiecesParams): TransactionInstruction {
         return new TransactionInstruction({
             programId: params.landProgramID,
             keys: [
