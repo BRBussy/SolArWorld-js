@@ -162,7 +162,7 @@ export default function Build() {
                             )
 
                             // prepare a land program instruction
-                            const landProgramInstruction = LandProgram.mintPositiveLandPieces({
+                            const landProgramInstruction = LandProgram.mintLandPieces({
                                 landProgramID: programPubKey,
                                 nftTokenAccOwnerAccPubKey: wallet.solanaKeys[0].solanaKeyPair.publicKey
                             });
