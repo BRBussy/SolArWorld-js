@@ -30,12 +30,12 @@ export const LandProgram: LandProgramSmartContract = {
                 //
                 // those that require write access
                 // those that require read-only access
-                {pubkey: params.landPlaneAccountToInitialise, isSigner: true, isWritable: true},
 
                 // 2nd
                 // Addresses not requiring signatures are 2nd, and in the following order:
                 //
                 // those that require write access
+                {pubkey: params.landPlaneAccountToInitialise, isSigner: false, isWritable: true},
                 // those that require read-only access
             ],
             data: Buffer.from(Uint8Array.of(0, ...new BN(0).toArray("le", 8)))
