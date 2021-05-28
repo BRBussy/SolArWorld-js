@@ -15,7 +15,7 @@ import {
     Logs, Context
 } from "@solana/web3.js";
 import {useWalletContext} from "../../../context/Wallet";
-import {LandProgram} from "../../../solArWorld/solana/smartContracts";
+import {LAND_PLANE_ACC_SIZE, LandProgram} from "../../../solArWorld/solana/smartContracts";
 
 const useStyles = makeStyles((theme) => ({
     field: {
@@ -151,10 +151,10 @@ export default function Build() {
                                         // new account to be owned by the land program
                                         programId: landProgramPublicKey,
                                         // no of bytes to allocate to acc
-                                        space: 1,
+                                        space: LAND_PLANE_ACC_SIZE,
                                         // no. of lamports for new acc
                                         lamports: await solanaRPCConnection.getMinimumBalanceForRentExemption(
-                                            1,
+                                            LAND_PLANE_ACC_SIZE,
                                             'singleGossip',
                                         ),
                                         // The account that will transfer lamports to the created account
@@ -162,6 +162,12 @@ export default function Build() {
                                         // public key of the acc to be created
                                         newAccountPubkey: newLandPlaneAccountKP.publicKey
                                     });
+
+                                    // prepare instruction to initialise new land acc
+                                    const initialiseNewLandAcc = LandProgram.initialiseLandPlaneAccount({
+                                        landProgramID: landProgramPublicKey,
+                                        landPlaneAccountToInitialise: newLandPlaneAccountKP.publicKey
+                                    })
 
                                     // create a new transaction and add instructions
                                     const txn = (new Transaction()).add(createNewLandPlaneAccInstruction);

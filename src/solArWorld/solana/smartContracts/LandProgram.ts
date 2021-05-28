@@ -12,6 +12,8 @@ export type MintLandPiecesParams = {
     nftTokenAccOwnerAccPubKey: PublicKey;
 }
 
+export const LAND_PLANE_ACC_SIZE = 10
+
 export interface LandProgramSmartContract {
     initialiseLandPlaneAccount(params: InitialiseLandPlaneAccountParams): TransactionInstruction;
 
