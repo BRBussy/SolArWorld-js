@@ -17,28 +17,42 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const solArPlaneTabRoutes: RouteType[] = [
-    {
-        name: 'Deeds Office',
-        id: 'solArPlane-deeds-office',
-        path: '/solArPlane/deeds-office',
-        component: DeedsOffice,
-        allowSubPaths: true
-    },
-    {
-        name: 'Explore',
-        id: 'solArPlane-explore',
-        path: '/solArPlane/explore',
-        component: Explore,
-        allowSubPaths: true
-    },
-];
+const solArPlaneTabRoutes: () => RouteType[] = () => {
+    const routes = [
+        {
+            name: 'Deeds Office',
+            id: 'solArPlane-deeds-office',
+            path: '/solArPlane/deeds-office',
+            component: DeedsOffice,
+            allowSubPaths: true
+        },
+        {
+            name: 'Explore',
+            id: 'solArPlane-explore',
+            path: '/solArPlane/explore',
+            component: Explore,
+            allowSubPaths: true
+        },
+    ];
+
+    if (localStorage.getItem('initialiseLandProgram')) {
+        routes.push({
+            name: 'Initialise',
+            id: 'solArPlane-initialise',
+            path: '/solArPlane/initialise',
+            component: Explore,
+            allowSubPaths: true
+        })
+    }
+
+    return routes;
+};
 
 export default function SolArPlane() {
     const classes = useStyles();
     const history = useHistory();
     const [activeTabRoutePath, setActiveTabRoutePath] = useState('');
-    const availableTabRoutes = solArPlaneTabRoutes;
+    const availableTabRoutes = solArPlaneTabRoutes();
 
     // navigate to first tab
     useLayoutEffect(() => {
