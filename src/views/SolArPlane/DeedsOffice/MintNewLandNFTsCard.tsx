@@ -226,19 +226,20 @@ export function MintNewLandNFTsCard() {
                                         <div className={classes.lineItemWithHelpIcon}>
                                             <Typography
                                                 variant={'subtitle2'}
-                                                children={loadingOwnerAccBalance
-                                                    ? 'loading...'
-                                                    : `This account holds SOL ${(newOwnerAccLamportBalance / LAMPORTS_PER_SOL).toFixed(10)}`
-                                                }
+                                                children={`This account holds SOL ${(newOwnerAccLamportBalance / LAMPORTS_PER_SOL).toFixed(10)}`}
                                             />
                                             <div>
-                                                {!loadingOwnerAccBalance &&
-                                                <IconButton
-                                                    onClick={() => setReloadOwnerAccBalanceToggle(!reloadOwnerAccBalanceToggle)}
-                                                    size={'small'}
-                                                >
-                                                    <ReloadIcon/>
-                                                </IconButton>}
+                                                {loadingOwnerAccBalance
+                                                    ? (<CircularProgress size={30}/>)
+                                                    : (
+                                                        <IconButton
+                                                            onClick={() => setReloadOwnerAccBalanceToggle(!reloadOwnerAccBalanceToggle)}
+                                                            size={'small'}
+                                                        >
+                                                            <ReloadIcon/>
+                                                        </IconButton>
+                                                    )
+                                                }
                                             </div>
                                         </div>
                                     </>
