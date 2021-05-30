@@ -4,15 +4,16 @@ import {
     Card,
     CardContent,
     CardHeader,
-    Grid,
+    Grid, Icon,
     makeStyles,
     MenuItem,
-    TextField,
+    TextField, Theme,
     Typography
 } from "@material-ui/core";
 import {AllQuadrantNumbers, QuadrantNo} from "../../../solArWorld/genesisRegion";
+import {InfoOutlined} from '@material-ui/icons'
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
     headerRoot: {
         display: 'grid',
         minWidth: 400,
@@ -24,11 +25,22 @@ const useStyles = makeStyles((theme) => ({
         gridTemplateColumns: '1fr',
         rowGap: theme.spacing(1)
     },
+    lineItemHelperText: {
+        color: theme.palette.text.hint
+    },
     lineItemWithHelpIcon: {
         display: 'grid',
         gridTemplateColumns: 'auto 1fr',
         alignItems: 'center',
-    }
+        columnGap: theme.spacing(1)
+    },
+    helpIcon: {
+        color: theme.palette.text.hint,
+        '&:hover': {
+            color: theme.palette.text.primary
+        },
+        cursor: 'pointer'
+    },
 }))
 
 export function MintNewLandNFTsCard() {
@@ -67,7 +79,7 @@ export function MintNewLandNFTsCard() {
                         <>
                             <Typography
                                 variant={'body2'}
-                                color={'textPrimary'}
+                                className={classes.lineItemHelperText}
                             >
                                 Select the quadrant in which you would like to mint new land.
                             </Typography>
@@ -80,10 +92,13 @@ export function MintNewLandNFTsCard() {
                                 >
                                     {AllQuadrantNumbers.map((n) => (
                                         <MenuItem key={n} value={n}>
-                                            {n}
+                                            {`Quadrant ${n}`}
                                         </MenuItem>
                                     ))}
                                 </TextField>
+                                <Icon className={classes.helpIcon}>
+                                    <InfoOutlined/>
+                                </Icon>
                             </div>
                         </>
                     ]).map((n, idx) => (
