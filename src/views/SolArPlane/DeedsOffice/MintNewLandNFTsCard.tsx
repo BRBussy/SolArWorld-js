@@ -131,7 +131,7 @@ export function MintNewLandNFTsCard() {
             }
             setFeesLoading(true);
             try {
-                
+
             } catch (e) {
                 console.error(`error loading fees: ${e}`)
             }
@@ -347,7 +347,8 @@ export function MintNewLandNFTsCard() {
                             <div className={classes.lineItemWithHelpIcon}>
                                 <Typography
                                     variant={'body2'}
-                                    children={'USD Price estimation made possible by:'}
+                                    className={classes.lineItemHelperText}
+                                    children={'USD Price estimation made possible by'}
                                 />
                                 <Typography
                                     className={classes.linkText}
@@ -357,6 +358,38 @@ export function MintNewLandNFTsCard() {
                                         '_blank'
                                     )}
                                     children={'Limestone Finance'}
+                                />
+                            </div>
+                            <div className={classes.lineItemWithHelpIcon}>
+                                <Typography
+                                    variant={'body2'}
+                                    className={classes.lineItemHelperText}
+                                    children={'Learn more about'}
+                                />
+                                <Typography
+                                    className={classes.linkText}
+                                    variant={'body2'}
+                                    onClick={() => window.open(
+                                        'https://github.com/limestone-finance/limestone-api',
+                                        '_blank'
+                                    )}
+                                    children={'Solana Transaction Fees'}
+                                />
+                            </div>
+                            <div className={classes.lineItemWithHelpIcon}>
+                                <Typography
+                                    variant={'body2'}
+                                    className={classes.lineItemHelperText}
+                                    children={'Learn more about'}
+                                />
+                                <Typography
+                                    className={classes.linkText}
+                                    variant={'body2'}
+                                    onClick={() => window.open(
+                                        'https://github.com/limestone-finance/limestone-api',
+                                        '_blank'
+                                    )}
+                                    children={'Solana Rent'}
                                 />
                             </div>
                         </>
