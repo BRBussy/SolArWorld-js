@@ -219,31 +219,30 @@ export function MintNewLandNFTsCard() {
     const [newOwnerAccLamportBalance, setNewOwnerAccLamportBalance] = useState(0);
     const [loadingOwnerAccBalance, setLoadingOwnerAccBalance] = useState(false);
     const [reloadOwnerAccBalanceToggle, setReloadOwnerAccBalanceToggle] = useState(false);
-    // useLayoutEffect(() => {
-    //     (async () => {
-    //         if (solanaContextInitialising) {
-    //             return;
-    //         }
-    //         if (!solanaKeyToPayWith) {
-    //             console.log('solana key to pay with is not set');
-    //             return;
-    //         }
-    //         if (!solanaRPCConnection) {
-    //             console.error('solana rpc connection is not set')
-    //             return;
-    //         }
-    //
-    //         setLoadingOwnerAccBalance(true);
-    //         try {
-    //             setNewOwnerAccLamportBalance(await solanaRPCConnection.getBalance(
-    //                 solanaKeyToPayWith.solanaKeyPair.publicKey,
-    //             ));
-    //         } catch (e) {
-    //             console.error(`error getting account balance: ${e}`)
-    //         }
-    //         setLoadingOwnerAccBalance(false);
-    //     })();
-    // }, [solanaKeyToPayWith, solanaRPCConnection, reloadOwnerAccBalanceToggle, solanaContextInitialising])
+    useLayoutEffect(() => {
+        (async () => {
+            if (solanaContextInitialising) {
+                return;
+            }
+            if (!solanaRPCConnection) {
+                console.error('solana rpc connection is not set')
+                return;
+            }
+            if (!mintLandPiecesParams) {
+                return;
+            }
+
+            setLoadingOwnerAccBalance(true);
+            try {
+                setNewOwnerAccLamportBalance(await solanaRPCConnection.getBalance(
+                    mintLandPiecesParams.nftTokenAccOwnerAccPubKey,
+                ));
+            } catch (e) {
+                console.error(`error getting account balance: ${e}`)
+            }
+            setLoadingOwnerAccBalance(false);
+        })();
+    }, [mintLandPiecesParams, solanaRPCConnection, reloadOwnerAccBalanceToggle, solanaContextInitialising])
 
     const [landNFTDecoratorAccountRentFee, setLandNFTDecoratorAccountRentFee] = useState(0);
     const [networkTransactionFee, setNetworkTransactionFee] = useState(0);
