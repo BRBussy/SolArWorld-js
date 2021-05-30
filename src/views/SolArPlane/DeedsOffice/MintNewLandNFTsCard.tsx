@@ -496,6 +496,12 @@ export function MintNewLandNFTsCard() {
                                         >
                                             Decide how many pieces you would like to mint next to each other.
                                         </Typography>
+                                        <Typography
+                                            variant={'body2'}
+                                            className={classes.lineItemHelperText}
+                                        >
+                                            Maximum amount that can be minted at a time is {MAX_NO_LAND_PIECES}.
+                                        </Typography>
                                     </div>
                                     <div className={classes.noOfPiecesLineItem}>
                                         <TextField
