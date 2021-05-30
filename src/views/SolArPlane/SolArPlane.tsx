@@ -7,6 +7,7 @@ import cx from "classnames";
 import YourLand from "./YourLand";
 import Explore from './Explore';
 import {SolArWorldScrollClassName} from "../../common";
+import Initialise from "./Initialise";
 
 const useStyles = makeStyles((theme) => ({
     content: {
@@ -41,7 +42,7 @@ const solArPlaneTabRoutes: () => RouteType[] = () => {
                 name: 'Initialise',
                 id: 'solArPlane-initialise',
                 path: '/solArPlane/initialise',
-                component: Explore,
+                component: Initialise,
                 allowSubPaths: true
             },
             ...routes,
