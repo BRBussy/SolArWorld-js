@@ -1,4 +1,4 @@
-import React, {useCallback, useLayoutEffect, useRef, useState} from 'react';
+import React, {useLayoutEffect, useRef, useState} from 'react';
 import {
     Button,
     Card,
@@ -25,6 +25,7 @@ import {LAND_NFT_DECORATOR_ACC_SIZE, MintLandPiecesParams} from "../../../solArW
 import limestone from 'limestone-api';
 import {DateTime} from "luxon";
 import {TouchedFields, ValidationResult} from "../../../common";
+import cx from 'classnames';
 
 const {symbols} = limestone;
 
@@ -53,6 +54,9 @@ const useStyles = makeStyles((theme: Theme) => ({
         gridTemplateColumns: 'auto 1fr',
         alignItems: 'center',
         columnGap: theme.spacing(1)
+    },
+    disabledText: {
+        color: theme.palette.text.disabled
     },
     estimatedCostSectionHeadingLayout: {
         display: 'grid',
@@ -284,7 +288,12 @@ export function MintNewLandNFTsCard() {
         })();
     }, [mintLandPiecesParams, solanaRPCConnection, solanaContextInitialising]);
 
-    const loading = loadingOwnerAccBalance;
+    const [mintingInProgress, setMintingInProgress] = useState(false);
+    const handleMint = async () => {
+
+    }
+
+    const loading = loadingOwnerAccBalance || mintingInProgress || feesLoading;
 
     return (
         <Card classes={{root: classes.cardRoot}}>
@@ -303,6 +312,7 @@ export function MintNewLandNFTsCard() {
                         <Grid container>
                             {([
                                 <Button
+                                    disabled={loading}
                                     color={'secondary'}
                                     variant={'contained'}
                                     children={'Mint'}
@@ -398,6 +408,7 @@ export function MintNewLandNFTsCard() {
                                                 <div className={classes.lineItemWithHelpIcon}>
                                                     <Typography
                                                         variant={'subtitle2'}
+                                                        className={cx({[classes.disabledText]: loadingOwnerAccBalance})}
                                                         children={`This account holds SOL ${(newOwnerAccLamportBalance / LAMPORTS_PER_SOL).toFixed(10)}`}
                                                     />
                                                     <div>
@@ -436,7 +447,7 @@ export function MintNewLandNFTsCard() {
                                     <div className={classes.noOfPiecesLineItem}>
                                         <TextField
                                             label={'No. of Pieces'}
-                                            disabled={loading}
+                                            disabled={validationInProgress || loading}
                                             inputProps={{type: 'number'}}
                                             onChange={(e) => handleUpdateMintLandPiecesParams('noOfPiecesToMint')(+e.target.value)}
                                             value={mintLandPiecesParams.noOfPiecesToMint}
@@ -455,6 +466,7 @@ export function MintNewLandNFTsCard() {
                                         />
                                         <Typography
                                             variant={'subtitle2'}
+                                            className={cx({[classes.disabledText]: feesLoading})}
                                             children={`SOL ${((networkTransactionFee + landNFTDecoratorAccountRentFee) / LAMPORTS_PER_SOL).toFixed(10)}`}
                                         />
                                         <Typography
@@ -464,6 +476,7 @@ export function MintNewLandNFTsCard() {
                                         />
                                         <Typography
                                             variant={'subtitle2'}
+                                            className={cx({[classes.disabledText]: feesLoading})}
                                             children={`USD ${usdTotal}`}
                                         />
                                         {usdSOLPriceData
@@ -495,6 +508,7 @@ export function MintNewLandNFTsCard() {
                                         />
                                         <Typography
                                             variant={'body2'}
+                                            className={cx({[classes.disabledText]: feesLoading})}
                                             children={`SOL ${(landNFTDecoratorAccountRentFee / LAMPORTS_PER_SOL).toFixed(10)}`}
                                         />
 
@@ -511,6 +525,7 @@ export function MintNewLandNFTsCard() {
                                             children={'Solana Network Transaction Fee:'}
                                         />
                                         <Typography
+                                            className={cx({[classes.disabledText]: feesLoading})}
                                             variant={'body2'}
                                             children={`SOL ${0.0001}`}
                                         />
