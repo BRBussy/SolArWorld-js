@@ -143,7 +143,7 @@ export function MintNewLandNFTsCard() {
         setSolanaKeyToPayWith(wallet.solanaKeys[0]);
 
         const initialMintLandPiecesParams: MintLandPiecesParams = {
-            landProgramID: quadrantNumberToLandProgramKey(QuadrantNo.One),
+            quadrantNo: QuadrantNo.One,
             nftTokenAccOwnerAccPubKey: wallet.solanaKeys[0].solanaKeyPair.publicKey,
             noOfPiecesToMint: 1
         }

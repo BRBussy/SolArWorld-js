@@ -1,5 +1,6 @@
 import {PublicKey, SYSVAR_RENT_PUBKEY, TransactionInstruction} from "@solana/web3.js";
 import BN from "bn.js";
+import {QuadrantNo, quadrantNumberToLandProgramKey} from "../../genesisRegion";
 
 export type InitialiseLandPlaneAccountParams = {
     landProgramID: PublicKey;
@@ -8,7 +9,7 @@ export type InitialiseLandPlaneAccountParams = {
 }
 
 export type MintLandPiecesParams = {
-    landProgramID: PublicKey;
+    quadrantNo: QuadrantNo;
     nftTokenAccOwnerAccPubKey: PublicKey;
     noOfPiecesToMint: number;
 }
@@ -47,7 +48,7 @@ export const LandProgram: LandProgramSmartContract = {
     },
     mintLandPieces(params: MintLandPiecesParams): TransactionInstruction {
         return new TransactionInstruction({
-            programId: params.landProgramID,
+            programId: quadrantNumberToLandProgramKey(params.quadrantNo),
             keys: [
                 // 1st
                 // Addresses requiring signatures are 1st, and in the following order:
