@@ -23,6 +23,7 @@ import {LAMPORTS_PER_SOL} from "@solana/web3.js";
 import {LAND_NFT_DECORATOR_ACC_SIZE} from "../../../solArWorld/solana/smartContracts";
 import limestone from 'limestone-api';
 import {PriceData} from "limestone-api/lib/types";
+import {DateTime} from "luxon";
 
 const {symbols} = limestone;
 
@@ -49,6 +50,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     lineItemWithHelpIcon: {
         display: 'grid',
         gridTemplateColumns: 'auto 1fr',
+        alignItems: 'center',
+        columnGap: theme.spacing(1)
+    },
+    estimatedCostSectionHeadingLayout: {
+        display: 'grid',
+        gridTemplateColumns: 'auto auto auto auto 1fr',
         alignItems: 'center',
         columnGap: theme.spacing(1)
     },
@@ -130,7 +137,7 @@ export function MintNewLandNFTsCard() {
     const [landNFTDecoratorAccountRentFee, setLandNFTDecoratorAccountRentFee] = useState(0);
     const [networkTransactionFee, setNetworkTransactionFee] = useState(0);
     const [usdTotal, setUSDTotal] = useState('0');
-    const [usdSOLPriceData, setUSDSOLPriceData] = useState<PriceData | null>(null);
+    const [usdSOLPriceData, setUSDSOLPriceData] = useState('0');
     const [feesLoading, setFeesLoading] = useState(false);
     useLayoutEffect(() => {
         (async () => {
@@ -171,17 +178,20 @@ export function MintNewLandNFTsCard() {
                     .lamportsPerSignature;
 
                 // calculate expected transaction fee
-                const transactionFee = feeMultiplier * 3; // FIXME: put proper no. of signatures here
+                const updatedNetworkTransactionFee = feeMultiplier * 3; // FIXME: put proper no. of signatures here
 
-                // calculate total sol price
-                const updatedTotalSolPrice = transactionFee + updatedLandDecoratorAccRentFee;
-
-                setUSDTotal((((updatedLandDecoratorAccRentFee + transactionFee) / LAMPORTS_PER_SOL) * updatedUSDSOLPriceData.value).toFixed(5))
-                setNetworkTransactionFee(transactionFee);
+                setUSDTotal((((updatedLandDecoratorAccRentFee + updatedNetworkTransactionFee) / LAMPORTS_PER_SOL) * updatedUSDSOLPriceData.value).toFixed(5))
+                setUSDSOLPriceData(`${
+                    updatedUSDSOLPriceData.value
+                } [USD / SOL] @ ${
+                    DateTime.fromMillis(updatedUSDSOLPriceData.timestamp).toUTC().toFormat('F')
+                } UTC`)
+                setNetworkTransactionFee(updatedNetworkTransactionFee);
                 setLandNFTDecoratorAccountRentFee(updatedLandDecoratorAccRentFee);
             } catch (e) {
                 console.error(`error loading fees: ${e}`)
             }
+
             setFeesLoading(false);
         })();
     }, [noOfPiecesToMint, solanaRPCConnection, solanaContextInitialising]);
@@ -346,17 +356,37 @@ export function MintNewLandNFTsCard() {
                             </div>
                         </>,
                         <>
-                            <div className={classes.lineItemWithHelpIcon}>
+                            <div className={classes.estimatedCostSectionHeadingLayout}>
                                 <Typography
                                     variant={'subtitle1'}
                                     children={'4. Estimated Cost:'}
                                 />
                                 <Typography
                                     variant={'subtitle2'}
-                                    children={`SOL ${
-                                        ((networkTransactionFee + landNFTDecoratorAccountRentFee) / LAMPORTS_PER_SOL).toFixed(10)
-                                    } - USD ${1.01}`}
+                                    children={`SOL ${((networkTransactionFee + landNFTDecoratorAccountRentFee) / LAMPORTS_PER_SOL).toFixed(10)}`}
                                 />
+                                <Typography
+                                    variant={'subtitle2'}
+                                    className={classes.lineItemHelperText}
+                                    children={'which is about'}
+                                />
+                                <Typography
+                                    variant={'subtitle2'}
+                                    children={`USD ${usdTotal}`}
+                                />
+                                {usdSOLPriceData
+                                    ? (
+                                        <Tooltip
+                                            placement={'top'}
+                                            title={usdSOLPriceData}
+                                        >
+                                            <Icon className={classes.helpIcon}>
+                                                <InfoOutlined/>
+                                            </Icon>
+                                        </Tooltip>
+                                    )
+                                    : <div/>
+                                }
                             </div>
                             <div className={classes.toPayForLineItems}>
                                 <Tooltip
