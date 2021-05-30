@@ -16,9 +16,11 @@ import {useWalletContext} from "../../../context/Wallet";
 import SolanaKey from "../../../solArWorld/solana/Key";
 
 const useStyles = makeStyles((theme: Theme) => ({
+    cardRoot: {
+        maxWidth: 550
+    },
     headerRoot: {
         display: 'grid',
-        minWidth: 400,
         gridTemplateColumns: '1fr auto',
         alignItems: 'center'
     },
@@ -62,7 +64,7 @@ export function MintNewLandNFTsCard() {
     }, [wallet.solanaKeys])
 
     return (
-        <Card>
+        <Card classes={{root: classes.cardRoot}}>
             <CardHeader
                 disableTypography
                 title={
