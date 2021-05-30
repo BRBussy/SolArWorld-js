@@ -124,30 +124,45 @@ export function MintNewLandNFTsCard() {
     }, [solanaKeyToPayWith, solanaRPCConnection, reloadOwnerAccBalanceToggle, solanaContextInitialising])
 
     const [landNFTDecoratorAccountRentFee, setLandNFTDecoratorAccountRentFee] = useState(0);
-    const [networkTransactionFee, setNetworkTransactionFee] = useState('0');
-    const [usdTotal, setUSDTotal] = useState('0');
+    const [networkTransactionFee, setNetworkTransactionFee] = useState(0);
+    const [usdTotal, setUSDTotal] = useState(0);
     const [feesLoading, setFeesLoading] = useState(false);
     useLayoutEffect(() => {
         (async () => {
             if (solanaContextInitialising) {
+                setLandNFTDecoratorAccountRentFee(0);
+                setNetworkTransactionFee(0);
+                setUSDTotal(0);
                 return;
             }
             if (!solanaRPCConnection) {
                 console.error('solana rpc connection is not set')
+                setLandNFTDecoratorAccountRentFee(0);
+                setNetworkTransactionFee(0);
+                setUSDTotal(0);
                 return;
             }
+            if (!noOfPiecesToMint) {
+                setLandNFTDecoratorAccountRentFee(0);
+                setNetworkTransactionFee(0);
+                setUSDTotal(0);
+                return;
+            }
+
             setFeesLoading(true);
             try {
                 const updatedLandDecoratorAccRentFee = await solanaRPCConnection.getMinimumBalanceForRentExemption(
-                    LAND_NFT_DECORATOR_ACC_SIZE,
+                    LAND_NFT_DECORATOR_ACC_SIZE * noOfPiecesToMint,
                     'singleGossip',
                 )
+
+                setLandNFTDecoratorAccountRentFee(updatedLandDecoratorAccRentFee);
             } catch (e) {
                 console.error(`error loading fees: ${e}`)
             }
             setFeesLoading(false);
         })();
-    }, [noOfPiecesToMint, solanaRPCConnection]);
+    }, [noOfPiecesToMint, solanaRPCConnection, solanaContextInitialising]);
 
     const loading = loadingOwnerAccBalance;
 
@@ -334,7 +349,7 @@ export function MintNewLandNFTsCard() {
                                 />
                                 <Typography
                                     variant={'body2'}
-                                    children={`SOL ${0.0001}`}
+                                    children={`SOL ${(landNFTDecoratorAccountRentFee / LAMPORTS_PER_SOL).toFixed(10)}`}
                                 />
 
                                 <Tooltip
