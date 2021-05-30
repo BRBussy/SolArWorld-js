@@ -7,7 +7,7 @@ import {
     Grid, Icon,
     makeStyles,
     MenuItem,
-    TextField, Theme,
+    TextField, Theme, Tooltip,
     Typography
 } from "@material-ui/core";
 import {AllQuadrantNumbers, QuadrantNo} from "../../../solArWorld/genesisRegion";
@@ -96,9 +96,14 @@ export function MintNewLandNFTsCard() {
                                         </MenuItem>
                                     ))}
                                 </TextField>
-                                <Icon className={classes.helpIcon}>
-                                    <InfoOutlined/>
-                                </Icon>
+                                <Tooltip
+                                    placement={'top'}
+                                    title={`Program deployed in account ${1234} manages this quadrant`}
+                                >
+                                    <Icon className={classes.helpIcon}>
+                                        <InfoOutlined/>
+                                    </Icon>
+                                </Tooltip>
                             </div>
                         </>
                     ]).map((n, idx) => (
