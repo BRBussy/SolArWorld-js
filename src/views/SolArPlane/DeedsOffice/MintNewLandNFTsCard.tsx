@@ -423,7 +423,7 @@ export function MintNewLandNFTsCard() {
                                         />
                                         <Typography
                                             variant={'body2'}
-                                            children={'Each piece is 50 x 50m'}
+                                            children={'Each piece is 10 x 10m'}
                                         />
                                     </div>
                                 </>,
