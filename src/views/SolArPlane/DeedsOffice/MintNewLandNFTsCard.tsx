@@ -21,7 +21,11 @@ import {useWalletContext} from "../../../context/Wallet";
 import {useSnackbar} from "notistack";
 import {useSolanaContext} from "../../../context/Solana";
 import {LAMPORTS_PER_SOL} from "@solana/web3.js";
-import {LAND_NFT_DECORATOR_ACC_SIZE, MintLandPiecesParams} from "../../../solArWorld/solana/smartContracts";
+import {
+    LAND_NFT_DECORATOR_ACC_SIZE,
+    MAX_NO_LAND_PIECES,
+    MintLandPiecesParams
+} from "../../../solArWorld/solana/smartContracts";
 import limestone from 'limestone-api';
 import {DateTime} from "luxon";
 import {TouchedFields, ValidationResult} from "../../../common";
@@ -72,7 +76,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     noOfPiecesLineItem: {
         display: 'grid',
-        gridTemplateColumns: '150px 1fr',
+        gridTemplateColumns: '100px 1fr',
         alignItems: 'center',
         columnGap: theme.spacing(1)
     },
@@ -180,8 +184,15 @@ export function MintNewLandNFTsCard() {
             return;
         }
 
-        // prepare updated paraps
-        const updatedMintLandPiecesParams = {
+        // do not allow going beyond max no of pieces
+        if (field === 'noOfPiecesToMint') {
+            if (newValue > MAX_NO_LAND_PIECES) {
+                return;
+            }
+        }
+
+        // prepare updated params
+        const updatedMintLandPiecesParams: MintLandPiecesParams = {
             ...mintLandPiecesParams,
             [field]: newValue
         };
