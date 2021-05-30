@@ -109,6 +109,11 @@ function validateMintLandPiecesParams(
         fieldValidations: {}
     };
 
+    console.log('validate with:', availableBalanceLamports, totalEstimatedFeeLamports)
+    console.log('validate with:', availableBalanceLamports < totalEstimatedFeeLamports )
+    // 8000000000
+    // 6960905880
+
     //
     // quadrantNo
     //
@@ -317,6 +322,8 @@ export function MintNewLandNFTsCard() {
 
     const loading = loadingOwnerAccBalance || mintingInProgress || feesLoading;
 
+    console.log(mintLandPiecesParamsValidationResult.fieldValidations)
+
     return (
         <Card classes={{root: classes.cardRoot}}>
             <CardHeader
@@ -449,6 +456,16 @@ export function MintNewLandNFTsCard() {
                                                         }
                                                     </div>
                                                 </div>
+                                                {mintLandPiecesParamsValidationResult.fieldValidations.availableBalance
+                                                    ? (
+                                                        <Typography
+                                                            variant={'subtitle2'}
+                                                            color={'error'}
+                                                            children={mintLandPiecesParamsValidationResult.fieldValidations.availableBalance}
+                                                        />
+                                                    )
+                                                    : null
+                                                }
                                             </>
                                         )
                                         : (
@@ -471,7 +488,7 @@ export function MintNewLandNFTsCard() {
                                     <div className={classes.noOfPiecesLineItem}>
                                         <TextField
                                             label={'No. of Pieces'}
-                                            disabled={validationInProgress || loading}
+                                            disabled={mintingInProgress}
                                             inputProps={{type: 'number'}}
                                             onChange={(e) => handleUpdateMintLandPiecesParams('noOfPiecesToMint')(+e.target.value)}
                                             value={mintLandPiecesParams.noOfPiecesToMint}
