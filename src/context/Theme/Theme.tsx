@@ -23,7 +23,7 @@ export const defaultTheme = createMuiTheme({
         MuiCardContent: {
             root: {
                 borderTop: '1px solid rgba(255, 255, 255, 0.12)',
-                padding: '8px'
+                padding: '16px'
             }
         }
     },

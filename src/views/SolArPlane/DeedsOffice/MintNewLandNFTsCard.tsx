@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useLayoutEffect, useState} from 'react';
 import {
     Button,
     Card,
@@ -12,6 +12,8 @@ import {
 } from "@material-ui/core";
 import {AllQuadrantNumbers, QuadrantNo} from "../../../solArWorld/genesisRegion";
 import {InfoOutlined} from '@material-ui/icons'
+import {useWalletContext} from "../../../context/Wallet";
+import SolanaKey from "../../../solArWorld/solana/Key";
 
 const useStyles = makeStyles((theme: Theme) => ({
     headerRoot: {
@@ -27,6 +29,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     lineItemHelperText: {
         color: theme.palette.text.hint
+    },
+    lineItemHelperTextWarning: {
+        color: theme.palette.warning.light
     },
     lineItemWithHelpIcon: {
         display: 'grid',
@@ -45,7 +50,16 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export function MintNewLandNFTsCard() {
     const classes = useStyles();
+    const {wallet} = useWalletContext();
     const [quadrantToMintNewLand, setQuadrantToMintNewLand] = useState(QuadrantNo.One);
+    const [solanaKeyToPayWith, setSolanaKeyToPayWith] = useState<SolanaKey | null>(null);
+
+    // on first load use first account
+    useLayoutEffect(() => {
+        if (wallet.solanaKeys.length) {
+            setSolanaKeyToPayWith(wallet.solanaKeys[0]);
+        }
+    }, [wallet.solanaKeys])
 
     return (
         <Card>
@@ -74,7 +88,7 @@ export function MintNewLandNFTsCard() {
                 }
             />
             <CardContent>
-                <Grid container direction={'column'}>
+                <Grid container direction={'column'} spacing={2}>
                     {([
                         <>
                             <Typography
@@ -105,6 +119,48 @@ export function MintNewLandNFTsCard() {
                                     </Icon>
                                 </Tooltip>
                             </div>
+                        </>,
+                        <>
+                            <div>
+                                <Typography
+                                    variant={'body2'}
+                                    className={classes.lineItemHelperText}
+                                >
+                                    Select which of your accounts you would like to have own the land.
+                                </Typography>
+                                <Typography
+                                    variant={'body2'}
+                                    className={classes.lineItemHelperTextWarning}
+                                >
+                                    This account will pay for minting
+                                </Typography>
+                            </div>
+                            {((!!wallet.solanaKeys.length) && (!!solanaKeyToPayWith))
+                                ? (
+                                    <TextField
+                                        select
+                                        label={'New Land Owner Account'}
+                                        value={solanaKeyToPayWith.solanaKeyPair.publicKey.toString()}
+                                        onChange={(e) => {
+                                            const solKey = wallet.solanaKeys.find((k) => (k.solanaKeyPair.publicKey.toString() === e.target.value))
+                                            if (!solKey) {
+                                                console.error(`could not find solana key in wallet with public key: ${e.target.value}`);
+                                                return;
+                                            }
+                                            setSolanaKeyToPayWith(solKey);
+                                        }}
+                                    >
+                                        {wallet.solanaKeys.map((k, idx) => (
+                                            <MenuItem key={idx} value={k.solanaKeyPair.publicKey.toString()}>
+                                                {k.solanaKeyPair.publicKey.toString()}
+                                            </MenuItem>
+                                        ))}
+                                    </TextField>
+                                )
+                                : (
+                                    <div>{'no keys available'}</div>
+                                )
+                            }
                         </>
                     ]).map((n, idx) => (
                         <Grid
