@@ -1,3 +1,4 @@
+export * from './validation';
 export const SolArWorldScrollClassName = 'solArWorldScroll'
 
 export const commonTagNameValues: string[] = [
