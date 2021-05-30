@@ -162,8 +162,14 @@ export function MintNewLandNFTsCard() {
     const {wallet} = useWalletContext();
     const {solanaRPCConnection, solanaContextInitialising} = useSolanaContext();
     const {enqueueSnackbar} = useSnackbar();
-
-    // initialise the mint land pieces params on screen load
+    const [newOwnerAccLamportBalance, setNewOwnerAccLamportBalance] = useState(0);
+    const [loadingOwnerAccBalance, setLoadingOwnerAccBalance] = useState(false);
+    const [reloadOwnerAccBalanceToggle, setReloadOwnerAccBalanceToggle] = useState(false);
+    const [landNFTDecoratorAccountRentFee, setLandNFTDecoratorAccountRentFee] = useState(0);
+    const [networkTransactionFee, setNetworkTransactionFee] = useState(0);
+    const [usdTotal, setUSDTotal] = useState('0');
+    const [usdSOLPriceData, setUSDSOLPriceData] = useState('0');
+    const [feesLoading, setFeesLoading] = useState(false);
     const [mintLandPiecesParams, setMintLandPiecesParams] = useState<MintLandPiecesParams | null>(null);
     const [touchedFields, setTouchedFields] = useState<TouchedFields>({});
     const [mintLandPiecesParamsValidationResult, setMintLandPiecesParamsValidationResult] = useState<ValidationResult>({
@@ -172,6 +178,9 @@ export function MintNewLandNFTsCard() {
     });
     const [validationInProgress, setValidationInProgress] = useState(false);
     const validationTimeoutRef = useRef<any>(undefined);
+
+
+    // initialise the mint land pieces params on screen load
     useLayoutEffect(() => {
         if (!wallet.solanaKeys.length) {
             return;
@@ -185,6 +194,8 @@ export function MintNewLandNFTsCard() {
 
         setMintLandPiecesParams(initialMintLandPiecesParams)
     }, [wallet.solanaKeys])
+
+    // handle updating MintLandPiecesParams
     const handleUpdateMintLandPiecesParams = (field: string, fieldsAffected?: string[]) => async (newValue: any) => {
         if (!mintLandPiecesParams) {
             return;
@@ -237,10 +248,7 @@ export function MintNewLandNFTsCard() {
         return setMintLandPiecesParams(updatedMintLandPiecesParams);
     }
 
-    // load selected account balance each time it changes
-    const [newOwnerAccLamportBalance, setNewOwnerAccLamportBalance] = useState(0);
-    const [loadingOwnerAccBalance, setLoadingOwnerAccBalance] = useState(false);
-    const [reloadOwnerAccBalanceToggle, setReloadOwnerAccBalanceToggle] = useState(false);
+    // update new owner account balance
     useLayoutEffect(() => {
         (async () => {
             if (solanaContextInitialising) {
@@ -265,15 +273,8 @@ export function MintNewLandNFTsCard() {
             setLoadingOwnerAccBalance(false);
         })();
     }, [mintLandPiecesParams, solanaRPCConnection, reloadOwnerAccBalanceToggle, solanaContextInitialising])
-    useLayoutEffect(() => {
 
-    }, [newOwnerAccLamportBalance])
-
-    const [landNFTDecoratorAccountRentFee, setLandNFTDecoratorAccountRentFee] = useState(0);
-    const [networkTransactionFee, setNetworkTransactionFee] = useState(0);
-    const [usdTotal, setUSDTotal] = useState('0');
-    const [usdSOLPriceData, setUSDSOLPriceData] = useState('0');
-    const [feesLoading, setFeesLoading] = useState(false);
+    // update fees whenever necessary
     useLayoutEffect(() => {
         (async () => {
             if (!mintLandPiecesParams) {
@@ -344,7 +345,7 @@ export function MintNewLandNFTsCard() {
     const insufficientBalance = (newOwnerAccLamportBalance < (networkTransactionFee + landNFTDecoratorAccountRentFee));
     const loading = loadingOwnerAccBalance || mintingInProgress || feesLoading;
 
-    console.log(mintLandPiecesParamsValidationResult.fieldValidations)
+    console.log(mintLandPiecesParamsValidationResult)
 
     return (
         <Card classes={{root: classes.cardRoot}}>
