@@ -41,6 +41,12 @@ const useStyles = makeStyles((theme: Theme) => ({
         alignItems: 'center',
         columnGap: theme.spacing(1)
     },
+    noOfPiecesLineItem: {
+        display: 'grid',
+        gridTemplateColumns: '150px 1fr',
+        alignItems: 'center',
+        columnGap: theme.spacing(1)
+    },
     helpIcon: {
         color: theme.palette.text.hint,
         '&:hover': {
@@ -55,6 +61,7 @@ export function MintNewLandNFTsCard() {
     const {wallet} = useWalletContext();
     const [quadrantToMintNewLand, setQuadrantToMintNewLand] = useState(QuadrantNo.One);
     const [solanaKeyToPayWith, setSolanaKeyToPayWith] = useState<SolanaKey | null>(null);
+    const [noOfPiecesToMint, setNoOfPiecesToMint] = useState(1);
 
     // on first load use first account
     useLayoutEffect(() => {
@@ -136,8 +143,7 @@ export function MintNewLandNFTsCard() {
                                     variant={'body2'}
                                     className={classes.lineItemHelperText}
                                 >
-                                    This is where you decide which of your accounts you would like to have own the new
-                                    land.
+                                    Decide which of your accounts you would like to have own the new land.
                                 </Typography>
                             </div>
                             <Typography
@@ -172,6 +178,30 @@ export function MintNewLandNFTsCard() {
                                     <div>{'no keys available'}</div>
                                 )
                             }
+                        </>,
+                        <>
+                            <div>
+                                <Typography variant={'subtitle1'}>
+                                    3. Number of Pieces
+                                </Typography>
+                                <Typography
+                                    variant={'body2'}
+                                    className={classes.lineItemHelperText}
+                                >
+                                    Decide how many pieces you would like to mint next to each other.
+                                </Typography>
+                            </div>
+                            <div className={classes.noOfPiecesLineItem}>
+                                <TextField
+                                    label={'No. of Pieces'}
+                                    inputProps={{type: 'number'}}
+                                    value={noOfPiecesToMint}
+                                />
+                                <Typography
+                                    variant={'body2'}
+                                    children={'Each piece is 50 x 50m'}
+                                />
+                            </div>
                         </>
                     ]).map((n, idx) => (
                         <Grid
