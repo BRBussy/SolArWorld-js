@@ -245,7 +245,14 @@ export function MintNewLandNFTsCard() {
 
     const [mintingInProgress, setMintingInProgress] = useState(false);
     const handleMint = async () => {
-
+        setMintingInProgress(true);
+        try {
+            enqueueSnackbar('Land Minted', {variant: 'success'})
+        } catch (e) {
+            enqueueSnackbar('Error Minting Land', {variant: 'error'})
+            console.error(`error minting land: ${e}`)
+        }
+        setMintingInProgress(false);
     }
 
     const insufficientBalance = (newOwnerAccLamportBalance < (networkTransactionFee + landNFTDecoratorAccountRentFee));
@@ -262,7 +269,8 @@ export function MintNewLandNFTsCard() {
                                 <Typography
                                     variant={'h5'}
                                     children={'Mint New Land NFTs'}
-                                />
+                                />,
+                                mintingInProgress ? <CircularProgress size={20}/> : null,
                             ]).map((n, idx) => (<Grid key={idx} item>{n}</Grid>))}
                         </Grid>
                         <Grid container>
@@ -271,6 +279,7 @@ export function MintNewLandNFTsCard() {
                                     disabled={loading || insufficientBalance}
                                     color={'secondary'}
                                     variant={'contained'}
+                                    onClick={handleMint}
                                     children={'Mint'}
                                 />
                             ]).map((n, idx) => (<Grid key={idx} item>{n}</Grid>))}
