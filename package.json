@@ -22,6 +22,7 @@
     "arweave": "^1.10.13",
     "bn.js": "^5.2.0",
     "classnames": "^2.3.1",
+    "limestone-api": "^3.0.7",
     "luxon": "^1.26.0",
     "notistack": "^1.0.7",
     "numeral": "^2.0.6",

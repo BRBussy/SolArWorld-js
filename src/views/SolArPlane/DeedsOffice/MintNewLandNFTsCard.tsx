@@ -21,6 +21,10 @@ import {useSnackbar} from "notistack";
 import {useSolanaContext} from "../../../context/Solana";
 import {LAMPORTS_PER_SOL} from "@solana/web3.js";
 import {LAND_NFT_DECORATOR_ACC_SIZE} from "../../../solArWorld/solana/smartContracts";
+import limestone from 'limestone-api';
+import {PriceData} from "limestone-api/lib/types";
+
+const {symbols} = limestone;
 
 const useStyles = makeStyles((theme: Theme) => ({
     cardRoot: {
@@ -125,32 +129,36 @@ export function MintNewLandNFTsCard() {
 
     const [landNFTDecoratorAccountRentFee, setLandNFTDecoratorAccountRentFee] = useState(0);
     const [networkTransactionFee, setNetworkTransactionFee] = useState(0);
-    const [usdTotal, setUSDTotal] = useState(0);
+    const [usdTotal, setUSDTotal] = useState('0');
+    const [usdSOLPriceData, setUSDSOLPriceData] = useState<PriceData | null>(null);
     const [feesLoading, setFeesLoading] = useState(false);
     useLayoutEffect(() => {
         (async () => {
             if (solanaContextInitialising) {
                 setLandNFTDecoratorAccountRentFee(0);
                 setNetworkTransactionFee(0);
-                setUSDTotal(0);
+                setUSDTotal('0');
                 return;
             }
             if (!solanaRPCConnection) {
                 console.error('solana rpc connection is not set')
                 setLandNFTDecoratorAccountRentFee(0);
                 setNetworkTransactionFee(0);
-                setUSDTotal(0);
+                setUSDTotal('0');
                 return;
             }
             if (!noOfPiecesToMint) {
                 setLandNFTDecoratorAccountRentFee(0);
                 setNetworkTransactionFee(0);
-                setUSDTotal(0);
+                setUSDTotal('0');
                 return;
             }
 
             setFeesLoading(true);
             try {
+                // get current usd sol price
+                const updatedUSDSOLPriceData = await limestone.getPrice(symbols.SOL);
+
                 // calculate the minimum balance for fee exception
                 const updatedLandDecoratorAccRentFee = await solanaRPCConnection.getMinimumBalanceForRentExemption(
                     LAND_NFT_DECORATOR_ACC_SIZE * noOfPiecesToMint,
@@ -168,6 +176,7 @@ export function MintNewLandNFTsCard() {
                 // calculate total sol price
                 const updatedTotalSolPrice = transactionFee + updatedLandDecoratorAccRentFee;
 
+                setUSDTotal((((updatedLandDecoratorAccRentFee + transactionFee) / LAMPORTS_PER_SOL) * updatedUSDSOLPriceData.value).toFixed(5))
                 setNetworkTransactionFee(transactionFee);
                 setLandNFTDecoratorAccountRentFee(updatedLandDecoratorAccRentFee);
             } catch (e) {
