@@ -3,15 +3,18 @@ import {
     Button,
     Card,
     CardContent,
-    CardHeader,
-    Grid, Icon,
+    CardHeader, CircularProgress,
+    Grid, Icon, IconButton,
     makeStyles,
     MenuItem,
     TextField, Theme, Tooltip,
     Typography
 } from "@material-ui/core";
 import {AllQuadrantNumbers, QuadrantNo} from "../../../solArWorld/genesisRegion";
-import {InfoOutlined} from '@material-ui/icons'
+import {
+    InfoOutlined,
+    Refresh as ReloadIcon
+} from '@material-ui/icons'
 import {useWalletContext} from "../../../context/Wallet";
 import SolanaKey from "../../../solArWorld/solana/Key";
 import {useSnackbar} from "notistack";
@@ -92,6 +95,7 @@ export function MintNewLandNFTsCard() {
     // load selected account balance each time it changes
     const [newOwnerAccLamportBalance, setNewOwnerAccLamportBalance] = useState(0);
     const [loadingOwnerAccBalance, setLoadingOwnerAccBalance] = useState(false);
+    const [reloadOwnerAccBalanceToggle, setReloadOwnerAccBalanceToggle] = useState(false);
     useLayoutEffect(() => {
         (async () => {
             if (!solanaKeyToPayWith) {
@@ -113,7 +117,7 @@ export function MintNewLandNFTsCard() {
             }
             setLoadingOwnerAccBalance(false);
         })();
-    }, [solanaKeyToPayWith, solanaRPCConnection])
+    }, [solanaKeyToPayWith, solanaRPCConnection, reloadOwnerAccBalanceToggle])
 
     return (
         <Card classes={{root: classes.cardRoot}}>
@@ -219,10 +223,24 @@ export function MintNewLandNFTsCard() {
                                                 </MenuItem>
                                             ))}
                                         </TextField>
-                                        <Typography
-                                            variant={'subtitle2'}
-                                            children={`This account holds SOL ${(newOwnerAccLamportBalance / LAMPORTS_PER_SOL).toFixed(10)}`}
-                                        />
+                                        <div className={classes.lineItemWithHelpIcon}>
+                                            <Typography
+                                                variant={'subtitle2'}
+                                                children={loadingOwnerAccBalance
+                                                    ? 'loading...'
+                                                    : `This account holds SOL ${(newOwnerAccLamportBalance / LAMPORTS_PER_SOL).toFixed(10)}`
+                                                }
+                                            />
+                                            <div>
+                                                {!loadingOwnerAccBalance &&
+                                                <IconButton
+                                                    onClick={() => setReloadOwnerAccBalanceToggle(!reloadOwnerAccBalanceToggle)}
+                                                    size={'small'}
+                                                >
+                                                    <ReloadIcon/>
+                                                </IconButton>}
+                                            </div>
+                                        </div>
                                     </>
                                 )
                                 : (
