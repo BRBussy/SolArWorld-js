@@ -1,4 +1,4 @@
-import React, {useLayoutEffect, useState} from 'react';
+import React, {useCallback, useLayoutEffect, useRef, useState} from 'react';
 import {
     Button,
     Card,
@@ -134,6 +134,13 @@ export function MintNewLandNFTsCard() {
 
     // initialise the mint land pieces params on screen load
     const [mintLandPiecesParams, setMintLandPiecesParams] = useState<MintLandPiecesParams | null>(null);
+    const [touchedFields, setTouchedFields] = useState<TouchedFields>({});
+    const [mintLandPiecesParamsValidationResult, setMintLandPiecesParamsValidationResult] = useState<ValidationResult>({
+        valid: false,
+        fieldValidations: {}
+    });
+    const [validationInProgress, setValidationInProgress] = useState(false);
+    const validationTimeoutRef = useRef<any>(undefined);
     useLayoutEffect(() => {
         if (!wallet.solanaKeys.length) {
             return;
@@ -150,6 +157,44 @@ export function MintNewLandNFTsCard() {
 
         setMintLandPiecesParams(initialMintLandPiecesParams)
     }, [wallet.solanaKeys])
+    const handleUpdateMintLandPiecesParams = (field: string, fieldsAffected?: string[]) => async (newValue: any) => {
+        if (!mintLandPiecesParams) {
+            return;
+        }
+
+        // prepare updated paraps
+        const updatedMintLandPiecesParams = {
+            ...mintLandPiecesParams,
+            [field]: newValue
+        };
+
+        // prepare updated touched fields
+        const updatedTouchedFields = {...touchedFields, [field]: true};
+        if (fieldsAffected) {
+            fieldsAffected.forEach((f) => {
+                updatedTouchedFields[f] = true;
+            });
+        }
+
+        // set updated touched fields
+        setTouchedFields(updatedTouchedFields);
+
+        // clear any pending validation
+        clearTimeout(validationTimeoutRef.current);
+
+        // defer validation to take place in 200ms
+        setValidationInProgress(true);
+        clearTimeout(validationTimeoutRef.current);
+        validationTimeoutRef.current = setTimeout(
+            () => {
+                setMintLandPiecesParamsValidationResult(validateMintLandPiecesParams(updatedMintLandPiecesParams, updatedTouchedFields, false));
+                setValidationInProgress(false);
+            },
+            800
+        );
+
+        return setMintLandPiecesParams(updatedMintLandPiecesParams);
+    }
 
     // load selected account balance each time it changes
     const [newOwnerAccLamportBalance, setNewOwnerAccLamportBalance] = useState(0);
