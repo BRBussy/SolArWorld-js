@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const solArPlaneTabRoutes: () => RouteType[] = () => {
-    const routes = [
+    let routes = [
         {
             name: 'Deeds Office',
             id: 'solArPlane-deeds-office',
@@ -36,13 +36,16 @@ const solArPlaneTabRoutes: () => RouteType[] = () => {
     ];
 
     if (localStorage.getItem('initialiseLandProgram')) {
-        routes.push({
-            name: 'Initialise',
-            id: 'solArPlane-initialise',
-            path: '/solArPlane/initialise',
-            component: Explore,
-            allowSubPaths: true
-        })
+        routes = [
+            {
+                name: 'Initialise',
+                id: 'solArPlane-initialise',
+                path: '/solArPlane/initialise',
+                component: Explore,
+                allowSubPaths: true
+            },
+            ...routes,
+        ]
     }
 
     return routes;
