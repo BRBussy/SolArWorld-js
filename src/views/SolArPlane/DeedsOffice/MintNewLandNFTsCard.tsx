@@ -62,6 +62,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     disabledText: {
         color: theme.palette.text.disabled
     },
+    errorText: {
+        color: theme.palette.error.main
+    },
+    successText: {
+        color: theme.palette.success.main
+    },
     estimatedCostSectionHeadingLayout: {
         display: 'grid',
         gridTemplateColumns: 'auto auto auto auto 1fr',
@@ -259,6 +265,9 @@ export function MintNewLandNFTsCard() {
             setLoadingOwnerAccBalance(false);
         })();
     }, [mintLandPiecesParams, solanaRPCConnection, reloadOwnerAccBalanceToggle, solanaContextInitialising])
+    useLayoutEffect(() => {
+
+    }, [newOwnerAccLamportBalance])
 
     const [landNFTDecoratorAccountRentFee, setLandNFTDecoratorAccountRentFee] = useState(0);
     const [networkTransactionFee, setNetworkTransactionFee] = useState(0);
@@ -332,6 +341,7 @@ export function MintNewLandNFTsCard() {
 
     }
 
+    const insufficientBalance = (newOwnerAccLamportBalance < (networkTransactionFee + landNFTDecoratorAccountRentFee));
     const loading = loadingOwnerAccBalance || mintingInProgress || feesLoading;
 
     console.log(mintLandPiecesParamsValidationResult.fieldValidations)
@@ -353,7 +363,7 @@ export function MintNewLandNFTsCard() {
                         <Grid container>
                             {([
                                 <Button
-                                    disabled={loading}
+                                    disabled={loading || insufficientBalance || !mintLandPiecesParamsValidationResult.valid}
                                     color={'secondary'}
                                     variant={'contained'}
                                     children={'Mint'}
@@ -451,7 +461,12 @@ export function MintNewLandNFTsCard() {
                                                 <div className={classes.lineItemWithHelpIcon}>
                                                     <Typography
                                                         variant={'subtitle2'}
-                                                        className={cx({[classes.disabledText]: loadingOwnerAccBalance})}
+                                                        className={cx({
+                                                            [classes.disabledText]: loadingOwnerAccBalance,
+                                                            [classes.errorText]: insufficientBalance && !loadingOwnerAccBalance,
+                                                            [classes.successText]: !(insufficientBalance || loadingOwnerAccBalance)
+                                                        })}
+                                                        color={(newOwnerAccLamportBalance < (networkTransactionFee + landNFTDecoratorAccountRentFee)) ? 'error' : undefined}
                                                         children={`This account holds SOL ${(newOwnerAccLamportBalance / LAMPORTS_PER_SOL).toFixed(10)}`}
                                                     />
                                                     <div>
@@ -468,16 +483,6 @@ export function MintNewLandNFTsCard() {
                                                         }
                                                     </div>
                                                 </div>
-                                                {mintLandPiecesParamsValidationResult.fieldValidations.availableBalance
-                                                    ? (
-                                                        <Typography
-                                                            variant={'subtitle2'}
-                                                            color={'error'}
-                                                            children={mintLandPiecesParamsValidationResult.fieldValidations.availableBalance}
-                                                        />
-                                                    )
-                                                    : null
-                                                }
                                             </>
                                         )
                                         : (
