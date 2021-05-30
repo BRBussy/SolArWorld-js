@@ -4,7 +4,7 @@ import {useHistory} from 'react-router-dom';
 import RouteType from '../../route/Route'
 import {Router} from "../../route";
 import cx from "classnames";
-import DeedsOffice from "./DeedsOffice";
+import YourLand from "./YourLand";
 import Explore from './Explore';
 import {SolArWorldScrollClassName} from "../../common";
 
@@ -20,10 +20,10 @@ const useStyles = makeStyles((theme) => ({
 const solArPlaneTabRoutes: () => RouteType[] = () => {
     let routes = [
         {
-            name: 'Deeds Office',
-            id: 'solArPlane-deeds-office',
-            path: '/solArPlane/deeds-office',
-            component: DeedsOffice,
+            name: 'Your Land',
+            id: 'solArPlane-your-land',
+            path: '/solArPlane/your-land',
+            component: YourLand,
             allowSubPaths: true
         },
         {
