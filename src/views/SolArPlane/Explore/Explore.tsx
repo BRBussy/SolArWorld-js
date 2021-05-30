@@ -3,12 +3,14 @@ import {
     makeStyles,
 } from "@material-ui/core";
 
-const useStyles = makeStyles((theme) => ({}))
+const useStyles = makeStyles((theme) => ({
+    root: {}
+}))
 
 export default function Explore() {
     const classes = useStyles();
     return (
-        <div>
+        <div className={classes.root}>
             Explore
         </div>
     )
