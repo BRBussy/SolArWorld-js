@@ -60,6 +60,14 @@ const useStyles = makeStyles((theme: Theme) => ({
         },
         cursor: 'pointer'
     },
+    linkText: {
+        fontWeight: 'bold',
+        color: theme.palette.primary.light,
+        '&:hover': {
+            textDecoration: 'underline'
+        },
+        cursor: 'pointer'
+    },
 }))
 
 export function MintNewLandNFTsCard() {
@@ -253,6 +261,21 @@ export function MintNewLandNFTsCard() {
                                 <Typography
                                     variant={'body2'}
                                     children={`SOL ${0.0001}`}
+                                />
+                            </div>
+                            <div className={classes.lineItemWithHelpIcon}>
+                                <Typography
+                                    variant={'body2'}
+                                    children={'USD Price estimation made possible by:'}
+                                />
+                                <Typography
+                                    className={classes.linkText}
+                                    variant={'body2'}
+                                    onClick={() => window.open(
+                                        'https://github.com/limestone-finance/limestone-api',
+                                        '_blank'
+                                    )}
+                                    children={'Limestone Finance'}
                                 />
                             </div>
                         </>
