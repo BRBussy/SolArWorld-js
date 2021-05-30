@@ -14,6 +14,9 @@ import {AllQuadrantNumbers, QuadrantNo} from "../../../solArWorld/genesisRegion"
 import {InfoOutlined} from '@material-ui/icons'
 import {useWalletContext} from "../../../context/Wallet";
 import SolanaKey from "../../../solArWorld/solana/Key";
+import {useSnackbar} from "notistack";
+import {useSolanaContext} from "../../../context/Solana";
+import {LAMPORTS_PER_SOL} from "@solana/web3.js";
 
 const useStyles = makeStyles((theme: Theme) => ({
     cardRoot: {
@@ -73,6 +76,8 @@ const useStyles = makeStyles((theme: Theme) => ({
 export function MintNewLandNFTsCard() {
     const classes = useStyles();
     const {wallet} = useWalletContext();
+    const {solanaRPCConnection} = useSolanaContext();
+    const {enqueueSnackbar} = useSnackbar();
     const [quadrantToMintNewLand, setQuadrantToMintNewLand] = useState(QuadrantNo.One);
     const [solanaKeyToPayWith, setSolanaKeyToPayWith] = useState<SolanaKey | null>(null);
     const [noOfPiecesToMint, setNoOfPiecesToMint] = useState(1);
@@ -83,6 +88,32 @@ export function MintNewLandNFTsCard() {
             setSolanaKeyToPayWith(wallet.solanaKeys[0]);
         }
     }, [wallet.solanaKeys])
+
+    // load selected account balance each time it changes
+    const [newOwnerAccLamportBalance, setNewOwnerAccLamportBalance] = useState(0);
+    const [loadingOwnerAccBalance, setLoadingOwnerAccBalance] = useState(false);
+    useLayoutEffect(() => {
+        (async () => {
+            if (!solanaKeyToPayWith) {
+                console.log('solana key to pay with is not set');
+                return;
+            }
+            if (!solanaRPCConnection) {
+                console.error('solana rpc connection is not set')
+                return;
+            }
+
+            setLoadingOwnerAccBalance(true);
+            try {
+                setNewOwnerAccLamportBalance(await solanaRPCConnection.getBalance(
+                    solanaKeyToPayWith.solanaKeyPair.publicKey,
+                ));
+            } catch (e) {
+                console.error(`error getting account balance: ${e}`)
+            }
+            setLoadingOwnerAccBalance(false);
+        })();
+    }, [solanaKeyToPayWith, solanaRPCConnection])
 
     return (
         <Card classes={{root: classes.cardRoot}}>
@@ -168,26 +199,31 @@ export function MintNewLandNFTsCard() {
                             </Typography>
                             {((!!wallet.solanaKeys.length) && (!!solanaKeyToPayWith))
                                 ? (
-                                    <TextField
-                                        select
-                                        label={'New Land Owner Account'}
-                                        value={solanaKeyToPayWith.solanaKeyPair.publicKey.toString()}
-                                        onChange={(e) => {
-                                            const solKey = wallet.solanaKeys.find((k) => (k.solanaKeyPair.publicKey.toString() === e.target.value))
-                                            if (!solKey) {
-                                                console.error(`could not find solana key in wallet with public key: ${e.target.value}`);
-                                                return;
-                                            }
-                                            setSolanaKeyToPayWith(solKey);
-                                        }}
-                                        helperText={`SOL Balance in Account SOL ${0.005}`}
-                                    >
-                                        {wallet.solanaKeys.map((k, idx) => (
-                                            <MenuItem key={idx} value={k.solanaKeyPair.publicKey.toString()}>
-                                                {k.solanaKeyPair.publicKey.toString()}
-                                            </MenuItem>
-                                        ))}
-                                    </TextField>
+                                    <>
+                                        <TextField
+                                            select
+                                            label={'New Land Owner Account'}
+                                            value={solanaKeyToPayWith.solanaKeyPair.publicKey.toString()}
+                                            onChange={(e) => {
+                                                const solKey = wallet.solanaKeys.find((k) => (k.solanaKeyPair.publicKey.toString() === e.target.value))
+                                                if (!solKey) {
+                                                    console.error(`could not find solana key in wallet with public key: ${e.target.value}`);
+                                                    return;
+                                                }
+                                                setSolanaKeyToPayWith(solKey);
+                                            }}
+                                        >
+                                            {wallet.solanaKeys.map((k, idx) => (
+                                                <MenuItem key={idx} value={k.solanaKeyPair.publicKey.toString()}>
+                                                    {k.solanaKeyPair.publicKey.toString()}
+                                                </MenuItem>
+                                            ))}
+                                        </TextField>
+                                        <Typography
+                                            variant={'subtitle2'}
+                                            children={`This account holds SOL ${(newOwnerAccLamportBalance / LAMPORTS_PER_SOL).toFixed(10)}`}
+                                        />
+                                    </>
                                 )
                                 : (
                                     <div>{'no keys available'}</div>
