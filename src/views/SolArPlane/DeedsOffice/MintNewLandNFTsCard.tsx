@@ -110,7 +110,7 @@ function validateMintLandPiecesParams(
     };
 
     console.log('validate with:', availableBalanceLamports, totalEstimatedFeeLamports)
-    console.log('validate with:', availableBalanceLamports < totalEstimatedFeeLamports )
+    console.log('validate with:', availableBalanceLamports < totalEstimatedFeeLamports)
     // 8000000000
     // 6960905880
 
@@ -285,11 +285,12 @@ export function MintNewLandNFTsCard() {
                 // get current usd sol price
                 const updatedUSDSOLPriceData = await limestone.getPrice(symbols.SOL);
 
-                // calculate the minimum balance for fee exception
-                const updatedLandDecoratorAccRentFee = await solanaRPCConnection.getMinimumBalanceForRentExemption(
+                // calculate the minimum balance for fee exception for 1 nft decorator account
+                const costFor1AccData = await solanaRPCConnection.getMinimumBalanceForRentExemption(
                     LAND_NFT_DECORATOR_ACC_SIZE * mintLandPiecesParams.noOfPiecesToMint,
                     'singleGossip',
                 )
+                const updatedLandDecoratorAccRentFee = mintLandPiecesParams.noOfPiecesToMint * costFor1AccData;
 
                 // get expected fee multiplier at the moment
                 const feeMultiplier = (await solanaRPCConnection.getRecentBlockhash('singleGossip'))
