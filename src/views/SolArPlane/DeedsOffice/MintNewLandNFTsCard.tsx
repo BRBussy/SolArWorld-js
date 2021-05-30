@@ -41,6 +41,12 @@ const useStyles = makeStyles((theme: Theme) => ({
         alignItems: 'center',
         columnGap: theme.spacing(1)
     },
+    toPayForLineItems: {
+        display: 'grid',
+        gridTemplateColumns: 'auto auto 1fr',
+        alignItems: 'center',
+        columnGap: theme.spacing(1)
+    },
     noOfPiecesLineItem: {
         display: 'grid',
         gridTemplateColumns: '150px 1fr',
@@ -212,6 +218,41 @@ export function MintNewLandNFTsCard() {
                                 <Typography
                                     variant={'subtitle2'}
                                     children={`SOL ${0.0001} - USD ${1.01}`}
+                                />
+                            </div>
+                            <div className={classes.toPayForLineItems}>
+                                <Tooltip
+                                    placement={'top'}
+                                    title={`You need to pay for this shit`}
+                                >
+                                    <Icon className={classes.helpIcon}>
+                                        <InfoOutlined/>
+                                    </Icon>
+                                </Tooltip>
+                                <Typography
+                                    variant={'body1'}
+                                    children={'Land NFT Decorator Acc Rent:'}
+                                />
+                                <Typography
+                                    variant={'body2'}
+                                    children={`SOL ${0.0001}`}
+                                />
+
+                                <Tooltip
+                                    placement={'top'}
+                                    title={`You need to pay for this shit`}
+                                >
+                                    <Icon className={classes.helpIcon}>
+                                        <InfoOutlined/>
+                                    </Icon>
+                                </Tooltip>
+                                <Typography
+                                    variant={'body1'}
+                                    children={'Solana Network Transaction Fee:'}
+                                />
+                                <Typography
+                                    variant={'body2'}
+                                    children={`SOL ${0.0001}`}
                                 />
                             </div>
                         </>
