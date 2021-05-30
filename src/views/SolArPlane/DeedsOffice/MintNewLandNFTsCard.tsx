@@ -202,6 +202,18 @@ export function MintNewLandNFTsCard() {
                                     children={'Each piece is 50 x 50m'}
                                 />
                             </div>
+                        </>,
+                        <>
+                            <div className={classes.lineItemWithHelpIcon}>
+                                <Typography
+                                    variant={'subtitle1'}
+                                    children={'4. Estimated Cost:'}
+                                />
+                                <Typography
+                                    variant={'subtitle2'}
+                                    children={`SOL ${0.0001} - USD ${1.01}`}
+                                />
+                            </div>
                         </>
                     ]).map((n, idx) => (
                         <Grid
