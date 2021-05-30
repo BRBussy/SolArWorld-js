@@ -110,17 +110,32 @@ function validateMintLandPiecesParams(
     };
 
     //
-    // amount
+    // quadrantNo
     //
-    // quadrant
+    // if quadrantNo is not set to Quadrant.One
     if (request.quadrantNo !== QuadrantNo.One) {
-        // then the request is not valid
+        // then the params are not valid
         validationResult.valid = false;
 
         // and if the field has been touched
         if (ignoreTouchedFields || touchedFields.quadrantNo) {
             // then an error message should be shown on it
             validationResult.fieldValidations.quadrantNo = 'Only Quadrant 1 available at this time';
+        }
+    }
+
+    //
+    // availableBalance
+    //
+    // if available balance is not sufficient
+    if (availableBalanceLamports < totalEstimatedFeeLamports) {
+        // then the params are not valid
+        validationResult.valid = false;
+
+        // and regardless of whether if the field has been touched
+        if (ignoreTouchedFields) {
+            // an error message should be shown on it
+            validationResult.fieldValidations.availableBalance = 'Balance in sufficient to cover estimated fee.';
         }
     }
 
