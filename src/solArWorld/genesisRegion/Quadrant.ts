@@ -1,4 +1,5 @@
 import {PublicKey} from "@solana/web3.js";
+import {QUAD1_LAND_PROGRAM_PUBLIC_KEY} from "./LandProgram";
 
 export const QuadrantTypeName = 'solArWorld/genesisRegion/Quadrant';
 
@@ -13,9 +14,11 @@ export const AllQuadrantNumbers: QuadrantNo[] = [
     QuadrantNo.Four
 ]
 
-export function QuadrantNumberToLandProgramKey(quadrantNumber: QuadrantNo): PublicKey {
+export function quadrantNumberToLandProgramKey(quadrantNumber: QuadrantNo): PublicKey {
     switch (quadrantNumber) {
         case QuadrantNo.One:
+            return QUAD1_LAND_PROGRAM_PUBLIC_KEY;
+
         case QuadrantNo.Two:
         case QuadrantNo.Three:
         case QuadrantNo.Four:

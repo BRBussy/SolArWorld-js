@@ -3,27 +3,29 @@ import {
     Button,
     Card,
     CardContent,
-    CardHeader, CircularProgress,
-    Grid, Icon, IconButton,
+    CardHeader,
+    CircularProgress,
+    Grid,
+    Icon,
+    IconButton,
     makeStyles,
     MenuItem,
-    TextField, Theme, Tooltip,
+    TextField,
+    Theme,
+    Tooltip,
     Typography
 } from "@material-ui/core";
-import {AllQuadrantNumbers, QuadrantNo} from "../../../solArWorld/genesisRegion";
-import {
-    InfoOutlined,
-    Refresh as ReloadIcon
-} from '@material-ui/icons'
+import {AllQuadrantNumbers, QuadrantNo, quadrantNumberToLandProgramKey} from "../../../solArWorld/genesisRegion";
+import {InfoOutlined, Refresh as ReloadIcon} from '@material-ui/icons'
 import {useWalletContext} from "../../../context/Wallet";
 import SolanaKey from "../../../solArWorld/solana/Key";
 import {useSnackbar} from "notistack";
 import {useSolanaContext} from "../../../context/Solana";
 import {LAMPORTS_PER_SOL} from "@solana/web3.js";
-import {LAND_NFT_DECORATOR_ACC_SIZE} from "../../../solArWorld/solana/smartContracts";
+import {LAND_NFT_DECORATOR_ACC_SIZE, MintLandPiecesParams} from "../../../solArWorld/solana/smartContracts";
 import limestone from 'limestone-api';
-import {PriceData} from "limestone-api/lib/types";
 import {DateTime} from "luxon";
+import {TouchedFields, ValidationResult} from "../../../common";
 
 const {symbols} = limestone;
 
@@ -88,20 +90,65 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
 }))
 
+function validateMintLandPiecesParams(
+    request: {},
+    touchedFields: TouchedFields,
+    ignoreTouchedFields: boolean
+): ValidationResult {
+    // prepare a validation result
+    const validationResult: ValidationResult = {
+        // assumed to be true -
+        // any error must set to false regardless of touched field state
+        valid: true,
+        // field validations
+        fieldValidations: {}
+    };
+
+    //
+    // amount
+    //
+    // // if the amount is 0
+    // if (!+request.amount.value()) {
+    //     // then the request is not valid
+    //     validationResult.valid = false;
+    //
+    //     // and if the field has been touched
+    //     if (ignoreTouchedFields || touchedFields.amount) {
+    //         // then an error message should be shown on it
+    //         validationResult.fieldValidations.amount = NumFieldHlpTxt.MustBeGreaterThan0;
+    //     }
+    // }
+
+    return validationResult;
+}
+
 export function MintNewLandNFTsCard() {
     const classes = useStyles();
     const {wallet} = useWalletContext();
     const {solanaRPCConnection, solanaContextInitialising} = useSolanaContext();
     const {enqueueSnackbar} = useSnackbar();
+
     const [quadrantToMintNewLand, setQuadrantToMintNewLand] = useState(QuadrantNo.One);
     const [solanaKeyToPayWith, setSolanaKeyToPayWith] = useState<SolanaKey | null>(null);
     const [noOfPiecesToMint, setNoOfPiecesToMint] = useState(1);
 
-    // on first load use first account
+    // initialise the mint land pieces params on screen load
+    const [mintLandPiecesParams, setMintLandPiecesParams] = useState<MintLandPiecesParams | null>(null);
     useLayoutEffect(() => {
-        if (wallet.solanaKeys.length) {
-            setSolanaKeyToPayWith(wallet.solanaKeys[0]);
+        if (!wallet.solanaKeys.length) {
+            return;
         }
+
+        // todo: remove
+        setSolanaKeyToPayWith(wallet.solanaKeys[0]);
+
+        const initialMintLandPiecesParams: MintLandPiecesParams = {
+            landProgramID: quadrantNumberToLandProgramKey(QuadrantNo.One),
+            nftTokenAccOwnerAccPubKey: wallet.solanaKeys[0].solanaKeyPair.publicKey,
+            noOfPiecesToMint: 1
+        }
+
+        setMintLandPiecesParams(initialMintLandPiecesParams)
     }, [wallet.solanaKeys])
 
     // load selected account balance each time it changes

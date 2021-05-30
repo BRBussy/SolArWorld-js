@@ -10,6 +10,7 @@ export type InitialiseLandPlaneAccountParams = {
 export type MintLandPiecesParams = {
     landProgramID: PublicKey;
     nftTokenAccOwnerAccPubKey: PublicKey;
+    noOfPiecesToMint: number;
 }
 
 export const LAND_PLANE_ACC_SIZE = 10
