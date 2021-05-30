@@ -164,7 +164,7 @@ export function MintNewLandNFTsCard() {
                                 variant={'body2'}
                                 className={classes.lineItemHelperTextWarning}
                             >
-                                NOTE: This account will pay for minting
+                                This account will pay for minting
                             </Typography>
                             {((!!wallet.solanaKeys.length) && (!!solanaKeyToPayWith))
                                 ? (
@@ -180,6 +180,7 @@ export function MintNewLandNFTsCard() {
                                             }
                                             setSolanaKeyToPayWith(solKey);
                                         }}
+                                        helperText={`SOL Balance in Account SOL ${0.005}`}
                                     >
                                         {wallet.solanaKeys.map((k, idx) => (
                                             <MenuItem key={idx} value={k.solanaKeyPair.publicKey.toString()}>
