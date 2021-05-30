@@ -15,10 +15,9 @@ import {
     Tooltip,
     Typography
 } from "@material-ui/core";
-import {AllQuadrantNumbers, QuadrantNo, quadrantNumberToLandProgramKey} from "../../../solArWorld/genesisRegion";
+import {AllQuadrantNumbers, QuadrantNo} from "../../../solArWorld/genesisRegion";
 import {InfoOutlined, Refresh as ReloadIcon} from '@material-ui/icons'
 import {useWalletContext} from "../../../context/Wallet";
-import SolanaKey from "../../../solArWorld/solana/Key";
 import {useSnackbar} from "notistack";
 import {useSolanaContext} from "../../../context/Solana";
 import {LAMPORTS_PER_SOL} from "@solana/web3.js";
