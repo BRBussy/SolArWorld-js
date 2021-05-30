@@ -128,8 +128,6 @@ export function MintNewLandNFTsCard() {
     const {solanaRPCConnection, solanaContextInitialising} = useSolanaContext();
     const {enqueueSnackbar} = useSnackbar();
 
-    const [noOfPiecesToMint, setNoOfPiecesToMint] = useState(1);
-
     // initialise the mint land pieces params on screen load
     const [mintLandPiecesParams, setMintLandPiecesParams] = useState<MintLandPiecesParams | null>(null);
     const [touchedFields, setTouchedFields] = useState<TouchedFields>({});
@@ -228,6 +226,10 @@ export function MintNewLandNFTsCard() {
     const [feesLoading, setFeesLoading] = useState(false);
     useLayoutEffect(() => {
         (async () => {
+            if (!mintLandPiecesParams) {
+                return;
+            }
+
             if (solanaContextInitialising) {
                 setLandNFTDecoratorAccountRentFee(0);
                 setNetworkTransactionFee(0);
@@ -241,7 +243,7 @@ export function MintNewLandNFTsCard() {
                 setUSDTotal('0');
                 return;
             }
-            if (!noOfPiecesToMint) {
+            if (!mintLandPiecesParams.noOfPiecesToMint) {
                 setLandNFTDecoratorAccountRentFee(0);
                 setNetworkTransactionFee(0);
                 setUSDTotal('0');
@@ -255,7 +257,7 @@ export function MintNewLandNFTsCard() {
 
                 // calculate the minimum balance for fee exception
                 const updatedLandDecoratorAccRentFee = await solanaRPCConnection.getMinimumBalanceForRentExemption(
-                    LAND_NFT_DECORATOR_ACC_SIZE * noOfPiecesToMint,
+                    LAND_NFT_DECORATOR_ACC_SIZE * mintLandPiecesParams.noOfPiecesToMint,
                     'singleGossip',
                 )
 
@@ -281,7 +283,7 @@ export function MintNewLandNFTsCard() {
 
             setFeesLoading(false);
         })();
-    }, [noOfPiecesToMint, solanaRPCConnection, solanaContextInitialising]);
+    }, [mintLandPiecesParams, solanaRPCConnection, solanaContextInitialising]);
 
     const loading = loadingOwnerAccBalance;
 
@@ -437,7 +439,7 @@ export function MintNewLandNFTsCard() {
                                             label={'No. of Pieces'}
                                             disabled={loading}
                                             inputProps={{type: 'number'}}
-                                            value={noOfPiecesToMint}
+                                            value={mintLandPiecesParams.noOfPiecesToMint}
                                         />
                                         <Typography
                                             variant={'body2'}
