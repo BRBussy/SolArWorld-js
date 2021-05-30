@@ -1,4 +1,4 @@
-import React, {useLayoutEffect, useRef, useState} from 'react';
+import React, {useLayoutEffect, useState} from 'react';
 import {
     Button,
     Card,
@@ -28,7 +28,6 @@ import {
 } from "../../../solArWorld/solana/smartContracts";
 import limestone from 'limestone-api';
 import {DateTime} from "luxon";
-import {TouchedFields, ValidationResult} from "../../../common";
 import cx from 'classnames';
 
 const {symbols} = limestone;
@@ -103,60 +102,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
 }))
 
-function validateMintLandPiecesParams(
-    request: MintLandPiecesParams,
-    totalEstimatedFeeLamports: number,
-    availableBalanceLamports: number,
-    touchedFields: TouchedFields,
-    ignoreTouchedFields: boolean
-): ValidationResult {
-    // prepare a validation result
-    const validationResult: ValidationResult = {
-        // assumed to be true -
-        // any error must set to false regardless of touched field state
-        valid: true,
-        // field validations
-        fieldValidations: {}
-    };
-
-    console.log('validate with:', availableBalanceLamports, totalEstimatedFeeLamports)
-    console.log('validate with:', availableBalanceLamports < totalEstimatedFeeLamports)
-    // 8000000000
-    // 6960905880
-
-    //
-    // quadrantNo
-    //
-    // if quadrantNo is not set to Quadrant.One
-    if (request.quadrantNo !== QuadrantNo.One) {
-        // then the params are not valid
-        validationResult.valid = false;
-
-        // and if the field has been touched
-        if (ignoreTouchedFields || touchedFields.quadrantNo) {
-            // then an error message should be shown on it
-            validationResult.fieldValidations.quadrantNo = 'Only Quadrant 1 available at this time';
-        }
-    }
-
-    //
-    // availableBalance
-    //
-    // if available balance is not sufficient
-    if (availableBalanceLamports < totalEstimatedFeeLamports) {
-        // then the params are not valid
-        validationResult.valid = false;
-
-        // and regardless of whether if the field has been touched
-        if (ignoreTouchedFields) {
-            // an error message should be shown on it
-            validationResult.fieldValidations.availableBalance = 'Balance in sufficient to cover estimated fee.';
-        }
-    }
-
-    return validationResult;
-}
-
 export function MintNewLandNFTsCard() {
     const classes = useStyles();
     const {wallet} = useWalletContext();
@@ -171,14 +116,6 @@ export function MintNewLandNFTsCard() {
     const [usdSOLPriceData, setUSDSOLPriceData] = useState('0');
     const [feesLoading, setFeesLoading] = useState(false);
     const [mintLandPiecesParams, setMintLandPiecesParams] = useState<MintLandPiecesParams | null>(null);
-    const [touchedFields, setTouchedFields] = useState<TouchedFields>({});
-    const [mintLandPiecesParamsValidationResult, setMintLandPiecesParamsValidationResult] = useState<ValidationResult>({
-        valid: false,
-        fieldValidations: {}
-    });
-    const [validationInProgress, setValidationInProgress] = useState(false);
-    const validationTimeoutRef = useRef<any>(undefined);
-
 
     // initialise the mint land pieces params on screen load
     useLayoutEffect(() => {
@@ -196,7 +133,7 @@ export function MintNewLandNFTsCard() {
     }, [wallet.solanaKeys])
 
     // handle updating MintLandPiecesParams
-    const handleUpdateMintLandPiecesParams = (field: string, fieldsAffected?: string[]) => async (newValue: any) => {
+    const handleUpdateMintLandPiecesParams = (field: string) => async (newValue: any) => {
         if (!mintLandPiecesParams) {
             return;
         }
@@ -213,37 +150,6 @@ export function MintNewLandNFTsCard() {
             ...mintLandPiecesParams,
             [field]: newValue
         };
-
-        // prepare updated touched fields
-        const updatedTouchedFields = {...touchedFields, [field]: true};
-        if (fieldsAffected) {
-            fieldsAffected.forEach((f) => {
-                updatedTouchedFields[f] = true;
-            });
-        }
-
-        // set updated touched fields
-        setTouchedFields(updatedTouchedFields);
-
-        // clear any pending validation
-        clearTimeout(validationTimeoutRef.current);
-
-        // defer validation to take place in 200ms
-        setValidationInProgress(true);
-        clearTimeout(validationTimeoutRef.current);
-        validationTimeoutRef.current = setTimeout(
-            () => {
-                setMintLandPiecesParamsValidationResult(validateMintLandPiecesParams(
-                    updatedMintLandPiecesParams,
-                    landNFTDecoratorAccountRentFee + networkTransactionFee,
-                    newOwnerAccLamportBalance,
-                    updatedTouchedFields,
-                    false,
-                ));
-                setValidationInProgress(false);
-            },
-            800
-        );
 
         return setMintLandPiecesParams(updatedMintLandPiecesParams);
     }
@@ -345,8 +251,6 @@ export function MintNewLandNFTsCard() {
     const insufficientBalance = (newOwnerAccLamportBalance < (networkTransactionFee + landNFTDecoratorAccountRentFee));
     const loading = loadingOwnerAccBalance || mintingInProgress || feesLoading;
 
-    console.log(mintLandPiecesParamsValidationResult)
-
     return (
         <Card classes={{root: classes.cardRoot}}>
             <CardHeader
@@ -364,7 +268,7 @@ export function MintNewLandNFTsCard() {
                         <Grid container>
                             {([
                                 <Button
-                                    disabled={loading || insufficientBalance || !mintLandPiecesParamsValidationResult.valid}
+                                    disabled={loading || insufficientBalance}
                                     color={'secondary'}
                                     variant={'contained'}
                                     children={'Mint'}
@@ -398,8 +302,8 @@ export function MintNewLandNFTsCard() {
                                             disabled={loading}
                                             value={mintLandPiecesParams.quadrantNo}
                                             onChange={(e) => handleUpdateMintLandPiecesParams('quadrantNo')(+e.target.value as QuadrantNo)}
-                                            error={!!mintLandPiecesParamsValidationResult.fieldValidations.quadrantNo}
-                                            helperText={mintLandPiecesParamsValidationResult.fieldValidations.quadrantNo}
+                                            error={mintLandPiecesParams.quadrantNo !== QuadrantNo.One}
+                                            helperText={mintLandPiecesParams.quadrantNo !== QuadrantNo.One ? 'Only Quadrant 1 available at this time' : undefined}
                                         >
                                             {AllQuadrantNumbers.map((n) => (
                                                 <MenuItem key={n} value={n}>
