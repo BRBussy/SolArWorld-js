@@ -344,7 +344,9 @@ export function MintNewLandNFTsCard() {
                                 />
                                 <Typography
                                     variant={'subtitle2'}
-                                    children={`SOL ${0.0001} - USD ${1.01}`}
+                                    children={`SOL ${
+                                        ((networkTransactionFee + landNFTDecoratorAccountRentFee) / LAMPORTS_PER_SOL).toFixed(10)
+                                    } - USD ${1.01}`}
                                 />
                             </div>
                             <div className={classes.toPayForLineItems}>
