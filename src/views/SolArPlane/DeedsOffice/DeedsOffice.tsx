@@ -25,6 +25,11 @@ const useStyles = makeStyles((theme) => ({
         gridTemplateColumns: '1fr auto',
         alignItems: 'center'
     },
+    newNTFCardLineItem: {
+        display: 'grid',
+        gridTemplateColumns: '1fr',
+        rowGap: theme.spacing(1)
+    },
     field: {
         minWidth: 500
     }
@@ -67,7 +72,22 @@ export default function DeedsOffice() {
                         }
                     />
                     <CardContent>
-                        asdf
+                        <Grid container direction={'column'}>
+                            {([
+                                <Typography
+                                    variant={'body2'}
+                                    color={'textPrimary'}
+                                >
+                                    Select the quadrant in which you would like to mint new land.
+                                </Typography>
+                            ]).map((n, idx) => (
+                                <Grid
+                                    className={classes.newNTFCardLineItem}
+                                    key={idx}
+                                    item
+                                >{n}</Grid>
+                            ))}
+                        </Grid>
                     </CardContent>
                 </Card>
             </Grid>
