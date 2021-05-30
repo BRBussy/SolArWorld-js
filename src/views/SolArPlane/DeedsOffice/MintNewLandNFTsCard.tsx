@@ -119,6 +119,8 @@ export function MintNewLandNFTsCard() {
         })();
     }, [solanaKeyToPayWith, solanaRPCConnection, reloadOwnerAccBalanceToggle])
 
+    const loading = loadingOwnerAccBalance;
+
     return (
         <Card classes={{root: classes.cardRoot}}>
             <CardHeader
@@ -164,6 +166,7 @@ export function MintNewLandNFTsCard() {
                                 <TextField
                                     select
                                     label={'Quadrant'}
+                                    disabled={loading}
                                     value={quadrantToMintNewLand}
                                     onChange={(e) => setQuadrantToMintNewLand(+e.target.value as QuadrantNo)}
                                 >
@@ -206,6 +209,7 @@ export function MintNewLandNFTsCard() {
                                     <>
                                         <TextField
                                             select
+                                            disabled={loading}
                                             label={'New Land Owner Account'}
                                             value={solanaKeyToPayWith.solanaKeyPair.publicKey.toString()}
                                             onChange={(e) => {
@@ -264,6 +268,7 @@ export function MintNewLandNFTsCard() {
                             <div className={classes.noOfPiecesLineItem}>
                                 <TextField
                                     label={'No. of Pieces'}
+                                    disabled={loading}
                                     inputProps={{type: 'number'}}
                                     value={noOfPiecesToMint}
                                 />
