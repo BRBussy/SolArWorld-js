@@ -439,6 +439,7 @@ export function MintNewLandNFTsCard() {
                                             label={'No. of Pieces'}
                                             disabled={loading}
                                             inputProps={{type: 'number'}}
+                                            onChange={(e) => handleUpdateMintLandPiecesParams('noOfPiecesToMint')(+e.target.value)}
                                             value={mintLandPiecesParams.noOfPiecesToMint}
                                         />
                                         <Typography
