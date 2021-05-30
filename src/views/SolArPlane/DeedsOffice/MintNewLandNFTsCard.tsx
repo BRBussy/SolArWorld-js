@@ -370,7 +370,7 @@ export function MintNewLandNFTsCard() {
                                     className={classes.linkText}
                                     variant={'body2'}
                                     onClick={() => window.open(
-                                        'https://github.com/limestone-finance/limestone-api',
+                                        'https://docs.solana.com/transaction_fees',
                                         '_blank'
                                     )}
                                     children={'Solana Transaction Fees'}
@@ -386,7 +386,7 @@ export function MintNewLandNFTsCard() {
                                     className={classes.linkText}
                                     variant={'body2'}
                                     onClick={() => window.open(
-                                        'https://github.com/limestone-finance/limestone-api',
+                                        'https://docs.solana.com/storage_rent_economics',
                                         '_blank'
                                     )}
                                     children={'Solana Rent'}
