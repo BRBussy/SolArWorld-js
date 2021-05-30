@@ -20,6 +20,7 @@ import SolanaKey from "../../../solArWorld/solana/Key";
 import {useSnackbar} from "notistack";
 import {useSolanaContext} from "../../../context/Solana";
 import {LAMPORTS_PER_SOL} from "@solana/web3.js";
+import {LAND_NFT_DECORATOR_ACC_SIZE} from "../../../solArWorld/solana/smartContracts";
 
 const useStyles = makeStyles((theme: Theme) => ({
     cardRoot: {
@@ -79,7 +80,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 export function MintNewLandNFTsCard() {
     const classes = useStyles();
     const {wallet} = useWalletContext();
-    const {solanaRPCConnection} = useSolanaContext();
+    const {solanaRPCConnection, solanaContextInitialising} = useSolanaContext();
     const {enqueueSnackbar} = useSnackbar();
     const [quadrantToMintNewLand, setQuadrantToMintNewLand] = useState(QuadrantNo.One);
     const [solanaKeyToPayWith, setSolanaKeyToPayWith] = useState<SolanaKey | null>(null);
@@ -98,6 +99,9 @@ export function MintNewLandNFTsCard() {
     const [reloadOwnerAccBalanceToggle, setReloadOwnerAccBalanceToggle] = useState(false);
     useLayoutEffect(() => {
         (async () => {
+            if (solanaContextInitialising) {
+                return;
+            }
             if (!solanaKeyToPayWith) {
                 console.log('solana key to pay with is not set');
                 return;
@@ -117,21 +121,27 @@ export function MintNewLandNFTsCard() {
             }
             setLoadingOwnerAccBalance(false);
         })();
-    }, [solanaKeyToPayWith, solanaRPCConnection, reloadOwnerAccBalanceToggle])
+    }, [solanaKeyToPayWith, solanaRPCConnection, reloadOwnerAccBalanceToggle, solanaContextInitialising])
 
-    const [landNFTDecoratorAccountRentFee, setLandNFTDecoratorAccountRentFee] = useState('0');
+    const [landNFTDecoratorAccountRentFee, setLandNFTDecoratorAccountRentFee] = useState(0);
     const [networkTransactionFee, setNetworkTransactionFee] = useState('0');
     const [usdTotal, setUSDTotal] = useState('0');
     const [feesLoading, setFeesLoading] = useState(false);
     useLayoutEffect(() => {
         (async () => {
+            if (solanaContextInitialising) {
+                return;
+            }
             if (!solanaRPCConnection) {
                 console.error('solana rpc connection is not set')
                 return;
             }
             setFeesLoading(true);
             try {
-
+                const updatedLandDecoratorAccRentFee = await solanaRPCConnection.getMinimumBalanceForRentExemption(
+                    LAND_NFT_DECORATOR_ACC_SIZE,
+                    'singleGossip',
+                )
             } catch (e) {
                 console.error(`error loading fees: ${e}`)
             }

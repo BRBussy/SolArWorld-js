@@ -4,6 +4,7 @@ import {SolanaNetwork, solanaNetworkToRPCURL} from "../../solArWorld/solana";
 import {Connection} from '@solana/web3.js'
 
 interface ContextType {
+    solanaContextInitialising: boolean;
     solanaNetwork: SolanaNetwork;
     setSolanaNetwork: (n: SolanaNetwork) => void;
     solanaRPCConnection: Connection | undefined;
@@ -12,12 +13,14 @@ interface ContextType {
 const Context = React.createContext({} as ContextType);
 
 function SolanaContext({children}: { children?: React.ReactNode }) {
+    const [solanaContextInitialising, setSolanaContextInitialising] = useState(false);
 
     // const [solanaNetwork, setSolanaNetwork] = useState<SolanaNetwork>(SolanaNetwork.MainnetBeta); FIXME: mainnet to be default
     const [solanaNetwork, setSolanaNetwork] = useState<SolanaNetwork>(SolanaNetwork.LocalTestnet);
     const [solanaRPCConnection, setSolanaRPCConnection] = useState<Connection | undefined>(undefined);
     useLayoutEffect(() => {
         (async () => {
+            setSolanaContextInitialising(true);
             try {
                 // connect and get version
                 const rpcURL = solanaNetworkToRPCURL(solanaNetwork);
@@ -29,6 +32,7 @@ function SolanaContext({children}: { children?: React.ReactNode }) {
             } catch (e) {
                 console.error(`error initialising solana client: ${e}`)
             }
+            setSolanaContextInitialising(false);
         })();
     }, [solanaNetwork])
 
@@ -37,7 +41,8 @@ function SolanaContext({children}: { children?: React.ReactNode }) {
             value={{
                 solanaNetwork,
                 setSolanaNetwork,
-                solanaRPCConnection
+                solanaRPCConnection,
+                solanaContextInitialising
             }}
         >
             {children}

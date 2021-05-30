@@ -14,6 +14,8 @@ export type MintLandPiecesParams = {
 
 export const LAND_PLANE_ACC_SIZE = 10
 
+export const LAND_NFT_DECORATOR_ACC_SIZE = 10
+
 export interface LandProgramSmartContract {
     initialiseLandPlaneAccount(params: InitialiseLandPlaneAccountParams): TransactionInstruction;
 
@@ -37,7 +39,7 @@ export const LandProgram: LandProgramSmartContract = {
                 // those that require write access
                 {pubkey: params.landPlaneAccountToInitialise, isSigner: false, isWritable: true},
                 // those that require read-only access
-                { pubkey: SYSVAR_RENT_PUBKEY, isSigner: false, isWritable: false},
+                {pubkey: SYSVAR_RENT_PUBKEY, isSigner: false, isWritable: false},
             ],
             data: Buffer.from(Uint8Array.from([0]))
         })
