@@ -110,17 +110,17 @@ function validateMintLandPiecesParams(
     //
     // amount
     //
-    // // if the amount is 0
-    // if (!+request.amount.value()) {
-    //     // then the request is not valid
-    //     validationResult.valid = false;
-    //
-    //     // and if the field has been touched
-    //     if (ignoreTouchedFields || touchedFields.amount) {
-    //         // then an error message should be shown on it
-    //         validationResult.fieldValidations.amount = NumFieldHlpTxt.MustBeGreaterThan0;
-    //     }
-    // }
+    // quadrant
+    if (request.quadrantNo !== QuadrantNo.One) {
+        // then the request is not valid
+        validationResult.valid = false;
+
+        // and if the field has been touched
+        if (ignoreTouchedFields || touchedFields.quadrantNo) {
+            // then an error message should be shown on it
+            validationResult.fieldValidations.quadrantNo = 'Only Quadrant 1 available at this time';
+        }
+    }
 
     return validationResult;
 }
@@ -346,6 +346,8 @@ export function MintNewLandNFTsCard() {
                                             disabled={loading}
                                             value={mintLandPiecesParams.quadrantNo}
                                             onChange={(e) => handleUpdateMintLandPiecesParams('quadrantNo')(+e.target.value as QuadrantNo)}
+                                            error={!!mintLandPiecesParamsValidationResult.fieldValidations.quadrantNo}
+                                            helperText={mintLandPiecesParamsValidationResult.fieldValidations.quadrantNo}
                                         >
                                             {AllQuadrantNumbers.map((n) => (
                                                 <MenuItem key={n} value={n}>
