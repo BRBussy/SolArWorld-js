@@ -91,7 +91,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 }))
 
 function validateMintLandPiecesParams(
-    request: {},
+    request: MintLandPiecesParams,
     touchedFields: TouchedFields,
     ignoreTouchedFields: boolean
 ): ValidationResult {
