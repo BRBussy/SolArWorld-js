@@ -3,7 +3,7 @@ import {PublicKey} from "@solana/web3.js";
 export const QuadrantTypeName = 'solArWorld/genesisRegion/Quadrant';
 
 export enum QuadrantNo {
-    One, Two, Three, Four
+    One = 1, Two, Three, Four
 }
 
 export const AllQuadrantNumbers: QuadrantNo[] = [
