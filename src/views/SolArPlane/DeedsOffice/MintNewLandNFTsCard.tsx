@@ -91,12 +91,17 @@ export function MintNewLandNFTsCard() {
                 <Grid container direction={'column'} spacing={2}>
                     {([
                         <>
-                            <Typography
-                                variant={'body2'}
-                                className={classes.lineItemHelperText}
-                            >
-                                Select the quadrant in which you would like to mint new land.
-                            </Typography>
+                            <div>
+                                <Typography variant={'subtitle1'}>
+                                    1. Select Quadrant
+                                </Typography>
+                                <Typography
+                                    variant={'body2'}
+                                    className={classes.lineItemHelperText}
+                                >
+                                    Select the quadrant in which you would like to mint new land.
+                                </Typography>
+                            </div>
                             <div className={classes.lineItemWithHelpIcon}>
                                 <TextField
                                     select
@@ -122,19 +127,23 @@ export function MintNewLandNFTsCard() {
                         </>,
                         <>
                             <div>
+                                <Typography variant={'subtitle1'}>
+                                    2. Select New Land Owner
+                                </Typography>
                                 <Typography
                                     variant={'body2'}
                                     className={classes.lineItemHelperText}
                                 >
-                                    Select which of your accounts you would like to have own the land.
-                                </Typography>
-                                <Typography
-                                    variant={'body2'}
-                                    className={classes.lineItemHelperTextWarning}
-                                >
-                                    This account will pay for minting
+                                    This is where you decide which of your accounts you would like to have own the new
+                                    land.
                                 </Typography>
                             </div>
+                            <Typography
+                                variant={'body2'}
+                                className={classes.lineItemHelperTextWarning}
+                            >
+                                NOTE: This account will pay for minting
+                            </Typography>
                             {((!!wallet.solanaKeys.length) && (!!solanaKeyToPayWith))
                                 ? (
                                     <TextField
