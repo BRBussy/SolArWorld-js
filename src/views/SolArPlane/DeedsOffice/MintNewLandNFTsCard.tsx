@@ -128,8 +128,6 @@ export function MintNewLandNFTsCard() {
     const {solanaRPCConnection, solanaContextInitialising} = useSolanaContext();
     const {enqueueSnackbar} = useSnackbar();
 
-    const [quadrantToMintNewLand, setQuadrantToMintNewLand] = useState(QuadrantNo.One);
-    const [solanaKeyToPayWith, setSolanaKeyToPayWith] = useState<SolanaKey | null>(null);
     const [noOfPiecesToMint, setNoOfPiecesToMint] = useState(1);
 
     // initialise the mint land pieces params on screen load
@@ -145,9 +143,6 @@ export function MintNewLandNFTsCard() {
         if (!wallet.solanaKeys.length) {
             return;
         }
-
-        // todo: remove
-        setSolanaKeyToPayWith(wallet.solanaKeys[0]);
 
         const initialMintLandPiecesParams: MintLandPiecesParams = {
             quadrantNo: QuadrantNo.One,
@@ -200,31 +195,31 @@ export function MintNewLandNFTsCard() {
     const [newOwnerAccLamportBalance, setNewOwnerAccLamportBalance] = useState(0);
     const [loadingOwnerAccBalance, setLoadingOwnerAccBalance] = useState(false);
     const [reloadOwnerAccBalanceToggle, setReloadOwnerAccBalanceToggle] = useState(false);
-    useLayoutEffect(() => {
-        (async () => {
-            if (solanaContextInitialising) {
-                return;
-            }
-            if (!solanaKeyToPayWith) {
-                console.log('solana key to pay with is not set');
-                return;
-            }
-            if (!solanaRPCConnection) {
-                console.error('solana rpc connection is not set')
-                return;
-            }
-
-            setLoadingOwnerAccBalance(true);
-            try {
-                setNewOwnerAccLamportBalance(await solanaRPCConnection.getBalance(
-                    solanaKeyToPayWith.solanaKeyPair.publicKey,
-                ));
-            } catch (e) {
-                console.error(`error getting account balance: ${e}`)
-            }
-            setLoadingOwnerAccBalance(false);
-        })();
-    }, [solanaKeyToPayWith, solanaRPCConnection, reloadOwnerAccBalanceToggle, solanaContextInitialising])
+    // useLayoutEffect(() => {
+    //     (async () => {
+    //         if (solanaContextInitialising) {
+    //             return;
+    //         }
+    //         if (!solanaKeyToPayWith) {
+    //             console.log('solana key to pay with is not set');
+    //             return;
+    //         }
+    //         if (!solanaRPCConnection) {
+    //             console.error('solana rpc connection is not set')
+    //             return;
+    //         }
+    //
+    //         setLoadingOwnerAccBalance(true);
+    //         try {
+    //             setNewOwnerAccLamportBalance(await solanaRPCConnection.getBalance(
+    //                 solanaKeyToPayWith.solanaKeyPair.publicKey,
+    //             ));
+    //         } catch (e) {
+    //             console.error(`error getting account balance: ${e}`)
+    //         }
+    //         setLoadingOwnerAccBalance(false);
+    //     })();
+    // }, [solanaKeyToPayWith, solanaRPCConnection, reloadOwnerAccBalanceToggle, solanaContextInitialising])
 
     const [landNFTDecoratorAccountRentFee, setLandNFTDecoratorAccountRentFee] = useState(0);
     const [networkTransactionFee, setNetworkTransactionFee] = useState(0);
@@ -317,261 +312,267 @@ export function MintNewLandNFTsCard() {
                 }
             />
             <CardContent>
-                <Grid container direction={'column'} spacing={2}>
-                    {([
-                        <>
-                            <div>
-                                <Typography variant={'subtitle1'}>
-                                    1. Select Quadrant
-                                </Typography>
-                                <Typography
-                                    variant={'body2'}
-                                    className={classes.lineItemHelperText}
-                                >
-                                    Select the quadrant in which you would like to mint new land.
-                                </Typography>
-                            </div>
-                            <div className={classes.lineItemWithHelpIcon}>
-                                <TextField
-                                    select
-                                    label={'Quadrant'}
-                                    disabled={loading}
-                                    value={quadrantToMintNewLand}
-                                    onChange={(e) => setQuadrantToMintNewLand(+e.target.value as QuadrantNo)}
-                                >
-                                    {AllQuadrantNumbers.map((n) => (
-                                        <MenuItem key={n} value={n}>
-                                            {`Quadrant ${n}`}
-                                        </MenuItem>
-                                    ))}
-                                </TextField>
-                                <Tooltip
-                                    placement={'top'}
-                                    title={`Program deployed in account ${1234} manages this quadrant`}
-                                >
-                                    <Icon className={classes.helpIcon}>
-                                        <InfoOutlined/>
-                                    </Icon>
-                                </Tooltip>
-                            </div>
-                        </>,
-                        <>
-                            <div>
-                                <Typography variant={'subtitle1'}>
-                                    2. Select New Land Owner
-                                </Typography>
-                                <Typography
-                                    variant={'body2'}
-                                    className={classes.lineItemHelperText}
-                                >
-                                    Decide which of your accounts you would like to have own the new land.
-                                </Typography>
-                            </div>
-                            <Typography
-                                variant={'body2'}
-                                className={classes.lineItemHelperTextWarning}
-                            >
-                                This account will pay for minting
-                            </Typography>
-                            {((!!wallet.solanaKeys.length) && (!!solanaKeyToPayWith))
-                                ? (
-                                    <>
+                {mintLandPiecesParams
+                    ? (
+                        <Grid container direction={'column'} spacing={2}>
+                            {([
+                                <>
+                                    <div>
+                                        <Typography variant={'subtitle1'}>
+                                            1. Select Quadrant
+                                        </Typography>
+                                        <Typography
+                                            variant={'body2'}
+                                            className={classes.lineItemHelperText}
+                                        >
+                                            Select the quadrant in which you would like to mint new land.
+                                        </Typography>
+                                    </div>
+                                    <div className={classes.lineItemWithHelpIcon}>
                                         <TextField
                                             select
+                                            label={'Quadrant'}
                                             disabled={loading}
-                                            label={'New Land Owner Account'}
-                                            value={solanaKeyToPayWith.solanaKeyPair.publicKey.toString()}
-                                            onChange={(e) => {
-                                                const solKey = wallet.solanaKeys.find((k) => (k.solanaKeyPair.publicKey.toString() === e.target.value))
-                                                if (!solKey) {
-                                                    console.error(`could not find solana key in wallet with public key: ${e.target.value}`);
-                                                    return;
-                                                }
-                                                setSolanaKeyToPayWith(solKey);
-                                            }}
+                                            value={mintLandPiecesParams.quadrantNo}
+                                            onChange={(e) => handleUpdateMintLandPiecesParams('quadrantNo')(+e.target.value as QuadrantNo)}
                                         >
-                                            {wallet.solanaKeys.map((k, idx) => (
-                                                <MenuItem key={idx} value={k.solanaKeyPair.publicKey.toString()}>
-                                                    {k.solanaKeyPair.publicKey.toString()}
+                                            {AllQuadrantNumbers.map((n) => (
+                                                <MenuItem key={n} value={n}>
+                                                    {`Quadrant ${n}`}
                                                 </MenuItem>
                                             ))}
                                         </TextField>
-                                        <div className={classes.lineItemWithHelpIcon}>
-                                            <Typography
-                                                variant={'subtitle2'}
-                                                children={`This account holds SOL ${(newOwnerAccLamportBalance / LAMPORTS_PER_SOL).toFixed(10)}`}
-                                            />
-                                            <div>
-                                                {loadingOwnerAccBalance
-                                                    ? (<CircularProgress size={30}/>)
-                                                    : (
-                                                        <IconButton
-                                                            onClick={() => setReloadOwnerAccBalanceToggle(!reloadOwnerAccBalanceToggle)}
-                                                            size={'small'}
-                                                        >
-                                                            <ReloadIcon/>
-                                                        </IconButton>
-                                                    )
-                                                }
-                                            </div>
-                                        </div>
-                                    </>
-                                )
-                                : (
-                                    <div>{'no keys available'}</div>
-                                )
-                            }
-                        </>,
-                        <>
-                            <div>
-                                <Typography variant={'subtitle1'}>
-                                    3. Number of Pieces
-                                </Typography>
-                                <Typography
-                                    variant={'body2'}
-                                    className={classes.lineItemHelperText}
-                                >
-                                    Decide how many pieces you would like to mint next to each other.
-                                </Typography>
-                            </div>
-                            <div className={classes.noOfPiecesLineItem}>
-                                <TextField
-                                    label={'No. of Pieces'}
-                                    disabled={loading}
-                                    inputProps={{type: 'number'}}
-                                    value={noOfPiecesToMint}
-                                />
-                                <Typography
-                                    variant={'body2'}
-                                    children={'Each piece is 50 x 50m'}
-                                />
-                            </div>
-                        </>,
-                        <>
-                            <div className={classes.estimatedCostSectionHeadingLayout}>
-                                <Typography
-                                    variant={'subtitle1'}
-                                    children={'4. Estimated Cost:'}
-                                />
-                                <Typography
-                                    variant={'subtitle2'}
-                                    children={`SOL ${((networkTransactionFee + landNFTDecoratorAccountRentFee) / LAMPORTS_PER_SOL).toFixed(10)}`}
-                                />
-                                <Typography
-                                    variant={'subtitle2'}
-                                    className={classes.lineItemHelperText}
-                                    children={'which is about'}
-                                />
-                                <Typography
-                                    variant={'subtitle2'}
-                                    children={`USD ${usdTotal}`}
-                                />
-                                {usdSOLPriceData
-                                    ? (
                                         <Tooltip
                                             placement={'top'}
-                                            title={usdSOLPriceData}
+                                            title={`Program deployed in account ${1234} manages this quadrant`}
                                         >
                                             <Icon className={classes.helpIcon}>
                                                 <InfoOutlined/>
                                             </Icon>
                                         </Tooltip>
-                                    )
-                                    : <div/>
-                                }
-                            </div>
-                            <div className={classes.toPayForLineItems}>
-                                <Tooltip
-                                    placement={'top'}
-                                    title={`You need to pay for this shit`}
-                                >
-                                    <Icon className={classes.helpIcon}>
-                                        <InfoOutlined/>
-                                    </Icon>
-                                </Tooltip>
-                                <Typography
-                                    variant={'body1'}
-                                    children={'Land NFT Decorator Acc Rent:'}
-                                />
-                                <Typography
-                                    variant={'body2'}
-                                    children={`SOL ${(landNFTDecoratorAccountRentFee / LAMPORTS_PER_SOL).toFixed(10)}`}
-                                />
+                                    </div>
+                                </>,
+                                <>
+                                    <div>
+                                        <Typography variant={'subtitle1'}>
+                                            2. Select New Land Owner
+                                        </Typography>
+                                        <Typography
+                                            variant={'body2'}
+                                            className={classes.lineItemHelperText}
+                                        >
+                                            Decide which of your accounts you would like to have own the new land.
+                                        </Typography>
+                                    </div>
+                                    <Typography
+                                        variant={'body2'}
+                                        className={classes.lineItemHelperTextWarning}
+                                    >
+                                        This account will pay for minting
+                                    </Typography>
+                                    {(!!wallet.solanaKeys.length)
+                                        ? (
+                                            <>
+                                                <TextField
+                                                    select
+                                                    disabled={loading}
+                                                    label={'New Land Owner Account'}
+                                                    value={mintLandPiecesParams.nftTokenAccOwnerAccPubKey.toString()}
+                                                    onChange={(e) => {
+                                                        const solKey = wallet.solanaKeys.find((k) => (k.solanaKeyPair.publicKey.toString() === e.target.value))
+                                                        if (!solKey) {
+                                                            console.error(`could not find solana key in wallet with public key: ${e.target.value}`);
+                                                            return;
+                                                        }
+                                                        handleUpdateMintLandPiecesParams('nftTokenAccOwnerAccPubKey')(solKey.solanaKeyPair.publicKey)
+                                                    }}
+                                                >
+                                                    {wallet.solanaKeys.map((k, idx) => (
+                                                        <MenuItem key={idx}
+                                                                  value={k.solanaKeyPair.publicKey.toString()}>
+                                                            {k.solanaKeyPair.publicKey.toString()}
+                                                        </MenuItem>
+                                                    ))}
+                                                </TextField>
+                                                <div className={classes.lineItemWithHelpIcon}>
+                                                    <Typography
+                                                        variant={'subtitle2'}
+                                                        children={`This account holds SOL ${(newOwnerAccLamportBalance / LAMPORTS_PER_SOL).toFixed(10)}`}
+                                                    />
+                                                    <div>
+                                                        {loadingOwnerAccBalance
+                                                            ? (<CircularProgress size={30}/>)
+                                                            : (
+                                                                <IconButton
+                                                                    onClick={() => setReloadOwnerAccBalanceToggle(!reloadOwnerAccBalanceToggle)}
+                                                                    size={'small'}
+                                                                >
+                                                                    <ReloadIcon/>
+                                                                </IconButton>
+                                                            )
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </>
+                                        )
+                                        : (
+                                            <div>{'no keys available'}</div>
+                                        )
+                                    }
+                                </>,
+                                <>
+                                    <div>
+                                        <Typography variant={'subtitle1'}>
+                                            3. Number of Pieces
+                                        </Typography>
+                                        <Typography
+                                            variant={'body2'}
+                                            className={classes.lineItemHelperText}
+                                        >
+                                            Decide how many pieces you would like to mint next to each other.
+                                        </Typography>
+                                    </div>
+                                    <div className={classes.noOfPiecesLineItem}>
+                                        <TextField
+                                            label={'No. of Pieces'}
+                                            disabled={loading}
+                                            inputProps={{type: 'number'}}
+                                            value={noOfPiecesToMint}
+                                        />
+                                        <Typography
+                                            variant={'body2'}
+                                            children={'Each piece is 50 x 50m'}
+                                        />
+                                    </div>
+                                </>,
+                                <>
+                                    <div className={classes.estimatedCostSectionHeadingLayout}>
+                                        <Typography
+                                            variant={'subtitle1'}
+                                            children={'4. Estimated Cost:'}
+                                        />
+                                        <Typography
+                                            variant={'subtitle2'}
+                                            children={`SOL ${((networkTransactionFee + landNFTDecoratorAccountRentFee) / LAMPORTS_PER_SOL).toFixed(10)}`}
+                                        />
+                                        <Typography
+                                            variant={'subtitle2'}
+                                            className={classes.lineItemHelperText}
+                                            children={'which is about'}
+                                        />
+                                        <Typography
+                                            variant={'subtitle2'}
+                                            children={`USD ${usdTotal}`}
+                                        />
+                                        {usdSOLPriceData
+                                            ? (
+                                                <Tooltip
+                                                    placement={'top'}
+                                                    title={usdSOLPriceData}
+                                                >
+                                                    <Icon className={classes.helpIcon}>
+                                                        <InfoOutlined/>
+                                                    </Icon>
+                                                </Tooltip>
+                                            )
+                                            : <div/>
+                                        }
+                                    </div>
+                                    <div className={classes.toPayForLineItems}>
+                                        <Tooltip
+                                            placement={'top'}
+                                            title={`You need to pay for this shit`}
+                                        >
+                                            <Icon className={classes.helpIcon}>
+                                                <InfoOutlined/>
+                                            </Icon>
+                                        </Tooltip>
+                                        <Typography
+                                            variant={'body1'}
+                                            children={'Land NFT Decorator Acc Rent:'}
+                                        />
+                                        <Typography
+                                            variant={'body2'}
+                                            children={`SOL ${(landNFTDecoratorAccountRentFee / LAMPORTS_PER_SOL).toFixed(10)}`}
+                                        />
 
-                                <Tooltip
-                                    placement={'top'}
-                                    title={`You need to pay for this shit`}
-                                >
-                                    <Icon className={classes.helpIcon}>
-                                        <InfoOutlined/>
-                                    </Icon>
-                                </Tooltip>
-                                <Typography
-                                    variant={'body1'}
-                                    children={'Solana Network Transaction Fee:'}
-                                />
-                                <Typography
-                                    variant={'body2'}
-                                    children={`SOL ${0.0001}`}
-                                />
-                            </div>
-                            <div className={classes.lineItemWithHelpIcon}>
-                                <Typography
-                                    variant={'body2'}
-                                    className={classes.lineItemHelperText}
-                                    children={'USD Price estimation made possible by'}
-                                />
-                                <Typography
-                                    className={classes.linkText}
-                                    variant={'body2'}
-                                    onClick={() => window.open(
-                                        'https://github.com/limestone-finance/limestone-api',
-                                        '_blank'
-                                    )}
-                                    children={'Limestone Finance'}
-                                />
-                            </div>
-                            <div className={classes.lineItemWithHelpIcon}>
-                                <Typography
-                                    variant={'body2'}
-                                    className={classes.lineItemHelperText}
-                                    children={'Learn more about'}
-                                />
-                                <Typography
-                                    className={classes.linkText}
-                                    variant={'body2'}
-                                    onClick={() => window.open(
-                                        'https://docs.solana.com/transaction_fees',
-                                        '_blank'
-                                    )}
-                                    children={'Solana Transaction Fees'}
-                                />
-                            </div>
-                            <div className={classes.lineItemWithHelpIcon}>
-                                <Typography
-                                    variant={'body2'}
-                                    className={classes.lineItemHelperText}
-                                    children={'Learn more about'}
-                                />
-                                <Typography
-                                    className={classes.linkText}
-                                    variant={'body2'}
-                                    onClick={() => window.open(
-                                        'https://docs.solana.com/storage_rent_economics',
-                                        '_blank'
-                                    )}
-                                    children={'Solana Rent'}
-                                />
-                            </div>
-                        </>
-                    ]).map((n, idx) => (
-                        <Grid
-                            className={classes.lineItem}
-                            key={idx}
-                            item
-                        >{n}</Grid>
-                    ))}
-                </Grid>
+                                        <Tooltip
+                                            placement={'top'}
+                                            title={`You need to pay for this shit`}
+                                        >
+                                            <Icon className={classes.helpIcon}>
+                                                <InfoOutlined/>
+                                            </Icon>
+                                        </Tooltip>
+                                        <Typography
+                                            variant={'body1'}
+                                            children={'Solana Network Transaction Fee:'}
+                                        />
+                                        <Typography
+                                            variant={'body2'}
+                                            children={`SOL ${0.0001}`}
+                                        />
+                                    </div>
+                                    <div className={classes.lineItemWithHelpIcon}>
+                                        <Typography
+                                            variant={'body2'}
+                                            className={classes.lineItemHelperText}
+                                            children={'USD Price estimation made possible by'}
+                                        />
+                                        <Typography
+                                            className={classes.linkText}
+                                            variant={'body2'}
+                                            onClick={() => window.open(
+                                                'https://github.com/limestone-finance/limestone-api',
+                                                '_blank'
+                                            )}
+                                            children={'Limestone Finance'}
+                                        />
+                                    </div>
+                                    <div className={classes.lineItemWithHelpIcon}>
+                                        <Typography
+                                            variant={'body2'}
+                                            className={classes.lineItemHelperText}
+                                            children={'Learn more about'}
+                                        />
+                                        <Typography
+                                            className={classes.linkText}
+                                            variant={'body2'}
+                                            onClick={() => window.open(
+                                                'https://docs.solana.com/transaction_fees',
+                                                '_blank'
+                                            )}
+                                            children={'Solana Transaction Fees'}
+                                        />
+                                    </div>
+                                    <div className={classes.lineItemWithHelpIcon}>
+                                        <Typography
+                                            variant={'body2'}
+                                            className={classes.lineItemHelperText}
+                                            children={'Learn more about'}
+                                        />
+                                        <Typography
+                                            className={classes.linkText}
+                                            variant={'body2'}
+                                            onClick={() => window.open(
+                                                'https://docs.solana.com/storage_rent_economics',
+                                                '_blank'
+                                            )}
+                                            children={'Solana Rent'}
+                                        />
+                                    </div>
+                                </>
+                            ]).map((n, idx) => (
+                                <Grid
+                                    className={classes.lineItem}
+                                    key={idx}
+                                    item
+                                >{n}</Grid>
+                            ))}
+                        </Grid>
+                    )
+                    : (<div>loading...</div>)
+                }
             </CardContent>
         </Card>
     )
