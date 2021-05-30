@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-export default function Build() {
+export default function DeedsOffice() {
     const classes = useStyles();
     const {wallet} = useWalletContext();
     const {solanaRPCConnection} = useSolanaContext();
