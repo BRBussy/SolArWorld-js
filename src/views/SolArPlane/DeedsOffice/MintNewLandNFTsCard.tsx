@@ -119,6 +119,26 @@ export function MintNewLandNFTsCard() {
         })();
     }, [solanaKeyToPayWith, solanaRPCConnection, reloadOwnerAccBalanceToggle])
 
+    const [landNFTDecoratorAccountRentFee, setLandNFTDecoratorAccountRentFee] = useState('0');
+    const [networkTransactionFee, setNetworkTransactionFee] = useState('0');
+    const [usdTotal, setUSDTotal] = useState('0');
+    const [feesLoading, setFeesLoading] = useState(false);
+    useLayoutEffect(() => {
+        (async () => {
+            if (!solanaRPCConnection) {
+                console.error('solana rpc connection is not set')
+                return;
+            }
+            setFeesLoading(true);
+            try {
+                
+            } catch (e) {
+                console.error(`error loading fees: ${e}`)
+            }
+            setFeesLoading(false);
+        })();
+    }, [noOfPiecesToMint, solanaRPCConnection]);
+
     const loading = loadingOwnerAccBalance;
 
     return (
