@@ -95,6 +95,8 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 function validateMintLandPiecesParams(
     request: MintLandPiecesParams,
+    totalEstimatedFeeLamports: number,
+    availableBalanceLamports: number,
     touchedFields: TouchedFields,
     ignoreTouchedFields: boolean
 ): ValidationResult {
@@ -183,7 +185,13 @@ export function MintNewLandNFTsCard() {
         clearTimeout(validationTimeoutRef.current);
         validationTimeoutRef.current = setTimeout(
             () => {
-                setMintLandPiecesParamsValidationResult(validateMintLandPiecesParams(updatedMintLandPiecesParams, updatedTouchedFields, false));
+                setMintLandPiecesParamsValidationResult(validateMintLandPiecesParams(
+                    updatedMintLandPiecesParams,
+                    landNFTDecoratorAccountRentFee + networkTransactionFee,
+                    newOwnerAccLamportBalance,
+                    updatedTouchedFields,
+                    false,
+                ));
                 setValidationInProgress(false);
             },
             800
