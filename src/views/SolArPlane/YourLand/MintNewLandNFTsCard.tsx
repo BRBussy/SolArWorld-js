@@ -112,6 +112,8 @@ export function MintNewLandNFTsCard() {
     const [loadingOwnerAccBalance, setLoadingOwnerAccBalance] = useState(false);
     const [reloadOwnerAccBalanceToggle, setReloadOwnerAccBalanceToggle] = useState(false);
     const [landNFTMetadataAccRentFee, setLandNFTMetadataAccRentFee] = useState(0);
+    const [landNFTMintAccRentFee, setLandNFTMintAccRentFee] = useState(0);
+    const [landNFTHoldingAccRentFee, setLandNFTHoldingAccRentFee] = useState(0);
     const [networkTransactionFee, setNetworkTransactionFee] = useState(0);
     const [usdTotal, setUSDTotal] = useState('0');
     const [usdSOLPriceData, setUSDSOLPriceData] = useState('0');
