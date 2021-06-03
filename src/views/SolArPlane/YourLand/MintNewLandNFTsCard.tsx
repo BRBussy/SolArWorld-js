@@ -261,7 +261,7 @@ export function MintNewLandNFTsCard() {
                 setNetworkTransactionFee(updatedNetworkTransactionFee);
                 setLandNFTMetadataAccRentFee(updatedLandNFTMetaDataAccRentFee);
                 setLandNFTMintAccRentFee(updatedLandNFTMintAccRentFee);
-                setLandNFTHoldingAccRentFee(updatedLandHoldingAccRentFee)
+                setLandNFTHoldingAccRentFee(updatedLandHoldingAccRentFee);
             } catch (e) {
                 console.error(`error loading fees: ${e}`)
             }
