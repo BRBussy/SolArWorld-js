@@ -215,12 +215,30 @@ export function MintNewLandNFTsCard() {
                 // get current usd sol price
                 const updatedUSDSOLPriceData = await limestone.getPrice(symbols.SOL);
 
-                // calculate the minimum balance for fee exception for 1 nft decorator account
-                const costFor1AccData = await solanaRPCConnection.getMinimumBalanceForRentExemption(
-                    LAND_NFT_DECORATOR_ACC_SIZE * mintLandPiecesParams.noOfPiecesToMint,
-                    'singleGossip',
-                )
-                const updatedLandDecoratorAccRentFee = mintLandPiecesParams.noOfPiecesToMint * costFor1AccData;
+                // calculate the minimum balance for fee exception for 1 nft metadata account
+                let updatedLandNFTMetaDataAccRentFee = 0;
+                let updatedLandNFTMintAccRentFee = 0;
+                let updatedLandHoldingAccRentFee = 0;
+                await Promise.all([
+                    (async () => {
+                        updatedLandNFTMetaDataAccRentFee = (await solanaRPCConnection.getMinimumBalanceForRentExemption(
+                            MintLayout.span,// FIXME: put correct thing here
+                            'singleGossip',
+                        )) * mintLandPiecesParams.noOfPiecesToMint;
+                    })(),
+                    (async () => {
+                        updatedLandNFTMintAccRentFee = (await solanaRPCConnection.getMinimumBalanceForRentExemption(
+                            MintLayout.span,
+                            'singleGossip',
+                        )) * mintLandPiecesParams.noOfPiecesToMint;
+                    })(),
+                    (async () => {
+                        updatedLandHoldingAccRentFee = (await solanaRPCConnection.getMinimumBalanceForRentExemption(
+                            AccountLayout.span,
+                            'singleGossip',
+                        )) * mintLandPiecesParams.noOfPiecesToMint;
+                    })(),
+                ]);
 
                 // get expected fee multiplier at the moment
                 const feeMultiplier = (await solanaRPCConnection.getRecentBlockhash('singleGossip'))
@@ -230,14 +248,20 @@ export function MintNewLandNFTsCard() {
                 // calculate expected transaction fee
                 const updatedNetworkTransactionFee = feeMultiplier * 3; // FIXME: put proper no. of signatures here
 
-                setUSDTotal((((updatedLandDecoratorAccRentFee + updatedNetworkTransactionFee) / LAMPORTS_PER_SOL) * updatedUSDSOLPriceData.value).toFixed(5))
+                setUSDTotal(((
+                    (
+                        updatedLandNFTMetaDataAccRentFee + updatedLandNFTMintAccRentFee +
+                        updatedLandHoldingAccRentFee + updatedNetworkTransactionFee
+                    ) / LAMPORTS_PER_SOL) * updatedUSDSOLPriceData.value).toFixed(5))
                 setUSDSOLPriceData(`${
                     updatedUSDSOLPriceData.value
                 } [USD / SOL] @ ${
                     DateTime.fromMillis(updatedUSDSOLPriceData.timestamp).toUTC().toFormat('F')
                 } UTC`)
                 setNetworkTransactionFee(updatedNetworkTransactionFee);
-                setLandNFTMetadataAccRentFee(updatedLandDecoratorAccRentFee);
+                setLandNFTMetadataAccRentFee(updatedLandNFTMetaDataAccRentFee);
+                setLandNFTMintAccRentFee(updatedLandNFTMintAccRentFee);
+                setLandNFTHoldingAccRentFee(updatedLandHoldingAccRentFee)
             } catch (e) {
                 console.error(`error loading fees: ${e}`)
             }
