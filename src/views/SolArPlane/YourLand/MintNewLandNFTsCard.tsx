@@ -623,7 +623,11 @@ export function MintNewLandNFTsCard() {
                                         {/* ---- Holding Acc ---- */}
                                         <Tooltip
                                             placement={'top'}
-                                            title={`You need to pay for this shit`}
+                                            title={`${
+                                                mintLandPiecesParams.noOfPiecesToMint
+                                            } piece @ SOL ${
+                                                landNFTHoldingAccRentFee / (mintLandPiecesParams.noOfPiecesToMint * LAMPORTS_PER_SOL)
+                                            } (${AccountLayout.span} bytes) each`}
                                         >
                                             <Icon className={classes.helpIcon}>
                                                 <InfoOutlined/>
