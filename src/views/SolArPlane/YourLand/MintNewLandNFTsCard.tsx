@@ -597,6 +597,7 @@ export function MintNewLandNFTsCard() {
                                         }
                                     </div>
                                     <div className={classes.toPayForLineItems}>
+                                        {/* ---- Mint Acc ---- */}
                                         <Tooltip
                                             placement={'top'}
                                             title={`You need to pay for this shit`}
@@ -607,7 +608,45 @@ export function MintNewLandNFTsCard() {
                                         </Tooltip>
                                         <Typography
                                             variant={'body1'}
-                                            children={'Land NFT Decorator Acc Rent:'}
+                                            children={'Land NFT Mint Acc Rent:'}
+                                        />
+                                        <Typography
+                                            variant={'body2'}
+                                            className={cx({[classes.disabledText]: feesLoading})}
+                                            children={`SOL ${(landNFTMintAccRentFee / LAMPORTS_PER_SOL).toFixed(10)}`}
+                                        />
+
+                                        {/* ---- Holding Acc ---- */}
+                                        <Tooltip
+                                            placement={'top'}
+                                            title={`You need to pay for this shit`}
+                                        >
+                                            <Icon className={classes.helpIcon}>
+                                                <InfoOutlined/>
+                                            </Icon>
+                                        </Tooltip>
+                                        <Typography
+                                            variant={'body1'}
+                                            children={'Land NFT Holding Acc Rent:'}
+                                        />
+                                        <Typography
+                                            variant={'body2'}
+                                            className={cx({[classes.disabledText]: feesLoading})}
+                                            children={`SOL ${(landNFTHoldingAccRentFee / LAMPORTS_PER_SOL).toFixed(10)}`}
+                                        />
+
+                                        {/* ---- Metadata Acc ---- */}
+                                        <Tooltip
+                                            placement={'top'}
+                                            title={`You need to pay for this shit`}
+                                        >
+                                            <Icon className={classes.helpIcon}>
+                                                <InfoOutlined/>
+                                            </Icon>
+                                        </Tooltip>
+                                        <Typography
+                                            variant={'body1'}
+                                            children={'Land NFT Meta Acc Rent:'}
                                         />
                                         <Typography
                                             variant={'body2'}
@@ -615,6 +654,7 @@ export function MintNewLandNFTsCard() {
                                             children={`SOL ${(landNFTMetadataAccRentFee / LAMPORTS_PER_SOL).toFixed(10)}`}
                                         />
 
+                                        {/* ---- Txn Fee ---- */}
                                         <Tooltip
                                             placement={'top'}
                                             title={`You need to pay for this shit`}
