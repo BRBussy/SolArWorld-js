@@ -20,8 +20,8 @@ import {InfoOutlined, Refresh as ReloadIcon} from '@material-ui/icons'
 import {useWalletContext} from "../../../context/Wallet";
 import {useSnackbar} from "notistack";
 import {useSolanaContext} from "../../../context/Solana";
-import {Keypair, LAMPORTS_PER_SOL, Transaction} from "@solana/web3.js";
-import {TOKEN_PROGRAM_ID, MintLayout, AccountLayout} from "@solana/spl-token"
+import {Keypair, LAMPORTS_PER_SOL, SystemProgram, Transaction, TransactionInstruction} from "@solana/web3.js";
+import {TOKEN_PROGRAM_ID, MintLayout, AccountLayout, Token} from "@solana/spl-token"
 import {
     LAND_NFT_DECORATOR_ACC_SIZE,
     MAX_NO_LAND_PIECES,
@@ -250,6 +250,10 @@ export function MintNewLandNFTsCard() {
             console.error('solana rpc connection is not set')
             return;
         }
+        if (!mintLandPiecesParams) {
+            console.error('params are not set');
+            return;
+        }
         setMintingInProgress(true);
         try {
             // Process for minting nft is as follows:
@@ -258,11 +262,89 @@ export function MintNewLandNFTsCard() {
             //    - decimals zero
             // 2. The mint authority uses the SPL Metadata program to create metadata
 
+            // prepare data that will be required for transaction construction
+
+            // generate a set of key pairs for new nft mint and holding accounts
+            const nftMintAcc = Keypair.generate();
+            const nft1stHoldAcc = Keypair.generate();
+
+            // get required opening balances for rent exemption for nftMintAcc and nft1stHoldAcc
+            const nftMintAccOpeningBal = await solanaRPCConnection.getMinimumBalanceForRentExemption(
+                MintLayout.span,
+            );
+            const nft1stHoldAccOpeningBal = await solanaRPCConnection.getMinimumBalanceForRentExemption(
+                AccountLayout.span,
+            );
+
+            // prepare instructions
+            const instructions: TransactionInstruction[] = [
+
+                // Create the new nft mint account
+                // (Owned by the token program)
+                SystemProgram.createAccount({
+                    fromPubkey: mintLandPiecesParams.nftTokenAccOwnerAccPubKey,
+                    newAccountPubkey: nftMintAcc.publicKey,
+                    lamports: nftMintAccOpeningBal,
+                    space: MintLayout.span,
+                    programId: TOKEN_PROGRAM_ID,
+                }),
+
+                // Initialise nft mint account
+                Token.createInitMintInstruction(
+                    TOKEN_PROGRAM_ID,
+                    nftMintAcc.publicKey,
+                    0,
+                    mintLandPiecesParams.nftTokenAccOwnerAccPubKey,
+                    mintLandPiecesParams.nftTokenAccOwnerAccPubKey,
+                ),
+
+                // Create the first nft holding account
+                // (Owned by the token program)
+                SystemProgram.createAccount({
+                    fromPubkey: mintLandPiecesParams.nftTokenAccOwnerAccPubKey,
+                    newAccountPubkey: nft1stHoldAcc.publicKey,
+                    lamports: nft1stHoldAccOpeningBal,
+                    space: MintLayout.span,
+                    programId: TOKEN_PROGRAM_ID,
+                }),
+
+                // Initialise first nft holding account
+                Token.createInitAccountInstruction(
+                    TOKEN_PROGRAM_ID,
+                    nftMintAcc.publicKey,
+                    nft1stHoldAcc.publicKey,
+                    // owner as assigned by token program in userspace
+                    mintLandPiecesParams.nftTokenAccOwnerAccPubKey,
+                ),
+
+                // Mint the NFT
+                Token.createMintToInstruction(
+                    TOKEN_PROGRAM_ID,
+                    nftMintAcc.publicKey,
+                    nft1stHoldAcc.publicKey,
+                    mintLandPiecesParams.nftTokenAccOwnerAccPubKey,
+                    [],
+                    1,
+                ),
+
+                // Remove mint authority to ensure that no
+                // more tokens can be produced by this mint.
+                Token.createSetAuthorityInstruction(
+                    TOKEN_PROGRAM_ID,
+                    nftMintAcc.publicKey,
+                    null,
+                    'MintTokens',
+                    mintLandPiecesParams.nftTokenAccOwnerAccPubKey,
+                    [],
+                ),
+            ];
+
             // prepare transaction to hold nft minting instructions
             const txn = new Transaction();
-            txn.recentBlockhash = (await solanaRPCConnection.getRecentBlockhash('max')).blockhash;
+            txn.recentBlockhash = (
+                await solanaRPCConnection.getRecentBlockhash('max')
+            ).blockhash;
 
-            // 1. prepare instructions
 
             enqueueSnackbar('Land Minted', {variant: 'success'})
         } catch (e) {
