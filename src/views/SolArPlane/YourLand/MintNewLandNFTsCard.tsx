@@ -20,7 +20,7 @@ import {InfoOutlined, Refresh as ReloadIcon} from '@material-ui/icons'
 import {useWalletContext} from "../../../context/Wallet";
 import {useSnackbar} from "notistack";
 import {useSolanaContext} from "../../../context/Solana";
-import {Keypair, LAMPORTS_PER_SOL} from "@solana/web3.js";
+import {Keypair, LAMPORTS_PER_SOL, Transaction} from "@solana/web3.js";
 import {TOKEN_PROGRAM_ID, MintLayout, AccountLayout} from "@solana/spl-token"
 import {
     LAND_NFT_DECORATOR_ACC_SIZE,
@@ -252,23 +252,17 @@ export function MintNewLandNFTsCard() {
         }
         setMintingInProgress(true);
         try {
+            // Process for minting nft is as follows:
             // 1. Create a new SPL Mint with:
             //    - supply of one
             //    - decimals zero
-
-            // generate a set of key pairs for new nft mint and holding accounts
-            const nftMintAcc = Keypair.generate();
-            const nft1stHoldAcc = Keypair.generate();
-
-            // get required opening balances for rent exemption for nftMintAcc and nft1stHoldAcc
-            const nftMintAccOpeningBal = await solanaRPCConnection.getMinimumBalanceForRentExemption(
-                MintLayout.span,
-            );
-            const nft1stHoldAccOpeningBal = await solanaRPCConnection.getMinimumBalanceForRentExemption(
-                AccountLayout.span,
-            );
-
             // 2. The mint authority uses the SPL Metadata program to create metadata
+
+            // prepare transaction to hold nft minting instructions
+            const txn = new Transaction();
+            txn.recentBlockhash = (await solanaRPCConnection.getRecentBlockhash('max')).blockhash;
+
+            // 1. prepare instructions
 
             enqueueSnackbar('Land Minted', {variant: 'success'})
         } catch (e) {
