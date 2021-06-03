@@ -646,7 +646,7 @@ export function MintNewLandNFTsCard() {
                                         </Tooltip>
                                         <Typography
                                             variant={'body1'}
-                                            children={'Land NFT Meta Acc Rent:'}
+                                            children={'Land NFT Metadata Acc Rent:'}
                                         />
                                         <Typography
                                             variant={'body2'}
