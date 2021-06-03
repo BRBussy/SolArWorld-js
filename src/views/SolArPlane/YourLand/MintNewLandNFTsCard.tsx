@@ -20,7 +20,8 @@ import {InfoOutlined, Refresh as ReloadIcon} from '@material-ui/icons'
 import {useWalletContext} from "../../../context/Wallet";
 import {useSnackbar} from "notistack";
 import {useSolanaContext} from "../../../context/Solana";
-import {LAMPORTS_PER_SOL} from "@solana/web3.js";
+import {Keypair, LAMPORTS_PER_SOL} from "@solana/web3.js";
+import {TOKEN_PROGRAM_ID, MintLayout, AccountLayout} from "@solana/spl-token"
 import {
     LAND_NFT_DECORATOR_ACC_SIZE,
     MAX_NO_LAND_PIECES,
@@ -245,8 +246,30 @@ export function MintNewLandNFTsCard() {
 
     const [mintingInProgress, setMintingInProgress] = useState(false);
     const handleMint = async () => {
+        if (!solanaRPCConnection) {
+            console.error('solana rpc connection is not set')
+            return;
+        }
         setMintingInProgress(true);
         try {
+            // 1. Create a new SPL Mint with:
+            //    - supply of one
+            //    - decimals zero
+
+            // generate a set of key pairs for new nft mint and holding accounts
+            const nftMintAcc = Keypair.generate();
+            const nft1stHoldAcc = Keypair.generate();
+
+            // get required opening balances for rent exemption for nftMintAcc and nft1stHoldAcc
+            const nftMintAccOpeningBal = await solanaRPCConnection.getMinimumBalanceForRentExemption(
+                MintLayout.span,
+            );
+            const nft1stHoldAccOpeningBal = await solanaRPCConnection.getMinimumBalanceForRentExemption(
+                AccountLayout.span,
+            );
+
+            // 2. The mint authority uses the SPL Metadata program to create metadata
+
             enqueueSnackbar('Land Minted', {variant: 'success'})
         } catch (e) {
             enqueueSnackbar('Error Minting Land', {variant: 'error'})
