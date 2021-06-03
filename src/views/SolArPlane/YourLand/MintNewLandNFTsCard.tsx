@@ -111,7 +111,7 @@ export function MintNewLandNFTsCard() {
     const [newOwnerAccLamportBalance, setNewOwnerAccLamportBalance] = useState(0);
     const [loadingOwnerAccBalance, setLoadingOwnerAccBalance] = useState(false);
     const [reloadOwnerAccBalanceToggle, setReloadOwnerAccBalanceToggle] = useState(false);
-    const [landNFTDecoratorAccountRentFee, setLandNFTDecoratorAccountRentFee] = useState(0);
+    const [landNFTMetadataAccRentFee, setLandNFTMetadataAccRentFee] = useState(0);
     const [networkTransactionFee, setNetworkTransactionFee] = useState(0);
     const [usdTotal, setUSDTotal] = useState('0');
     const [usdSOLPriceData, setUSDSOLPriceData] = useState('0');
@@ -189,20 +189,20 @@ export function MintNewLandNFTsCard() {
             }
 
             if (solanaContextInitialising) {
-                setLandNFTDecoratorAccountRentFee(0);
+                setLandNFTMetadataAccRentFee(0);
                 setNetworkTransactionFee(0);
                 setUSDTotal('0');
                 return;
             }
             if (!solanaRPCConnection) {
                 console.error('solana rpc connection is not set')
-                setLandNFTDecoratorAccountRentFee(0);
+                setLandNFTMetadataAccRentFee(0);
                 setNetworkTransactionFee(0);
                 setUSDTotal('0');
                 return;
             }
             if (!mintLandPiecesParams.noOfPiecesToMint) {
-                setLandNFTDecoratorAccountRentFee(0);
+                setLandNFTMetadataAccRentFee(0);
                 setNetworkTransactionFee(0);
                 setUSDTotal('0');
                 return;
@@ -235,7 +235,7 @@ export function MintNewLandNFTsCard() {
                     DateTime.fromMillis(updatedUSDSOLPriceData.timestamp).toUTC().toFormat('F')
                 } UTC`)
                 setNetworkTransactionFee(updatedNetworkTransactionFee);
-                setLandNFTDecoratorAccountRentFee(updatedLandDecoratorAccRentFee);
+                setLandNFTMetadataAccRentFee(updatedLandDecoratorAccRentFee);
             } catch (e) {
                 console.error(`error loading fees: ${e}`)
             }
@@ -354,7 +354,7 @@ export function MintNewLandNFTsCard() {
         setMintingInProgress(false);
     }
 
-    const insufficientBalance = (newOwnerAccLamportBalance < (networkTransactionFee + landNFTDecoratorAccountRentFee));
+    const insufficientBalance = (newOwnerAccLamportBalance < (networkTransactionFee + landNFTMetadataAccRentFee));
     const loading = loadingOwnerAccBalance || mintingInProgress || feesLoading;
 
     return (
@@ -479,7 +479,7 @@ export function MintNewLandNFTsCard() {
                                                             [classes.errorText]: insufficientBalance && !loadingOwnerAccBalance,
                                                             [classes.successText]: !(insufficientBalance || loadingOwnerAccBalance)
                                                         })}
-                                                        color={(newOwnerAccLamportBalance < (networkTransactionFee + landNFTDecoratorAccountRentFee)) ? 'error' : undefined}
+                                                        color={(newOwnerAccLamportBalance < (networkTransactionFee + landNFTMetadataAccRentFee)) ? 'error' : undefined}
                                                         children={`This account holds SOL ${(newOwnerAccLamportBalance / LAMPORTS_PER_SOL).toFixed(10)}`}
                                                     />
                                                     <div>
@@ -544,7 +544,7 @@ export function MintNewLandNFTsCard() {
                                         <Typography
                                             variant={'subtitle2'}
                                             className={cx({[classes.disabledText]: feesLoading})}
-                                            children={`SOL ${((networkTransactionFee + landNFTDecoratorAccountRentFee) / LAMPORTS_PER_SOL).toFixed(10)}`}
+                                            children={`SOL ${((networkTransactionFee + landNFTMetadataAccRentFee) / LAMPORTS_PER_SOL).toFixed(10)}`}
                                         />
                                         <Typography
                                             variant={'subtitle2'}
@@ -586,7 +586,7 @@ export function MintNewLandNFTsCard() {
                                         <Typography
                                             variant={'body2'}
                                             className={cx({[classes.disabledText]: feesLoading})}
-                                            children={`SOL ${(landNFTDecoratorAccountRentFee / LAMPORTS_PER_SOL).toFixed(10)}`}
+                                            children={`SOL ${(landNFTMetadataAccRentFee / LAMPORTS_PER_SOL).toFixed(10)}`}
                                         />
 
                                         <Tooltip
