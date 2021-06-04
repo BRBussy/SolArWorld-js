@@ -1,9 +1,13 @@
-import React, {useContext, useLayoutEffect, useState} from 'react';
+import React, {useContext, useLayoutEffect, useRef, useState} from 'react';
 import {SolanaNetwork, solanaNetworkToRPCURL} from "../../solArWorld/solana";
 
 import {Connection} from '@solana/web3.js'
+import SolanaWallet, {PhantomWallet} from "../../solArWorld/solana/wallet";
 
 interface ContextType {
+    solanaWallets: SolanaWallet[];
+    solanaSelectedWallet: SolanaWallet;
+    setSelectedSolanaWallet: (provider: string) => void;
     solanaContextInitialising: boolean;
     solanaNetwork: SolanaNetwork;
     setSolanaNetwork: (n: SolanaNetwork) => void;
@@ -14,6 +18,11 @@ const Context = React.createContext({} as ContextType);
 
 function SolanaContext({children}: { children?: React.ReactNode }) {
     const [solanaContextInitialising, setSolanaContextInitialising] = useState(false);
+
+    const {current: solanaWallets} = useRef([
+        PhantomWallet
+    ]);
+    const [solanaSelectedWallet, setSolanaSelectedWallet] = useState<SolanaWallet>(solanaWallets[0]);
 
     // const [solanaNetwork, setSolanaNetwork] = useState<SolanaNetwork>(SolanaNetwork.MainnetBeta); FIXME: mainnet to be default
     const [solanaNetwork, setSolanaNetwork] = useState<SolanaNetwork>(SolanaNetwork.LocalTestnet);
@@ -39,10 +48,19 @@ function SolanaContext({children}: { children?: React.ReactNode }) {
     return (
         <Context.Provider
             value={{
+                setSelectedSolanaWallet: (provider: string) => {
+                    const w = solanaWallets.find((wn) => (wn.metadata().provider === provider))
+                    if (!w) {
+                        throw new Error(`invalid wallet provider: ${provider}`);
+                    }
+                    setSolanaSelectedWallet(w);
+                },
+                solanaWallets,
+                solanaSelectedWallet,
                 solanaNetwork,
                 setSolanaNetwork,
                 solanaRPCConnection,
-                solanaContextInitialising
+                solanaContextInitialising,
             }}
         >
             {children}
