@@ -6,9 +6,10 @@ import SolanaWallet, {PhantomWallet} from "../../solArWorld/solana/wallet";
 
 interface ContextType {
     solanaWallets: SolanaWallet[];
-    solanaSelectedWallet: SolanaWallet;
+    solanaSelectedWallet: SolanaWallet | undefined;
     setSelectedSolanaWallet: (provider: string) => void;
-    solanaContextInitialising: boolean;
+
+    solanaRPCConnectionInitializing: boolean;
     solanaNetwork: SolanaNetwork;
     setSolanaNetwork: (n: SolanaNetwork) => void;
     solanaRPCConnection: Connection | undefined;
@@ -17,19 +18,18 @@ interface ContextType {
 const Context = React.createContext({} as ContextType);
 
 function SolanaContext({children}: { children?: React.ReactNode }) {
-    const [solanaContextInitialising, setSolanaContextInitialising] = useState(false);
-
     const {current: solanaWallets} = useRef([
         PhantomWallet
     ]);
     const [solanaSelectedWallet, setSolanaSelectedWallet] = useState<SolanaWallet>(solanaWallets[0]);
 
-    // const [solanaNetwork, setSolanaNetwork] = useState<SolanaNetwork>(SolanaNetwork.MainnetBeta); FIXME: mainnet to be default
+    const [solanaRPCConnectionInitializing, setSolanaRPCConnectionInitializing] = useState(false);
+    // const [solanaNetwork, setSolanaNetwork] = useState<SolanaNetwork>(SolanaNetwork.MainnetBeta); FIXME: should be mainnet by default
     const [solanaNetwork, setSolanaNetwork] = useState<SolanaNetwork>(SolanaNetwork.LocalTestnet);
     const [solanaRPCConnection, setSolanaRPCConnection] = useState<Connection | undefined>(undefined);
     useLayoutEffect(() => {
         (async () => {
-            setSolanaContextInitialising(true);
+            setSolanaRPCConnectionInitializing(true);
             try {
                 // connect and get version
                 const rpcURL = solanaNetworkToRPCURL(solanaNetwork);
@@ -41,14 +41,14 @@ function SolanaContext({children}: { children?: React.ReactNode }) {
             } catch (e) {
                 console.error(`error initialising solana client: ${e}`)
             }
-            setSolanaContextInitialising(false);
+            setSolanaRPCConnectionInitializing(false);
         })();
     }, [solanaNetwork])
 
     return (
         <Context.Provider
             value={{
-                setSelectedSolanaWallet: (provider: string) => {
+                setSelectedSolanaWallet: async (provider: string) => {
                     const w = solanaWallets.find((wn) => (wn.metadata().provider === provider))
                     if (!w) {
                         throw new Error(`invalid wallet provider: ${provider}`);
@@ -60,7 +60,7 @@ function SolanaContext({children}: { children?: React.ReactNode }) {
                 solanaNetwork,
                 setSolanaNetwork,
                 solanaRPCConnection,
-                solanaContextInitialising,
+                solanaRPCConnectionInitializing,
             }}
         >
             {children}

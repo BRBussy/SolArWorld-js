@@ -106,7 +106,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 export function MintNewLandNFTsCard() {
     const classes = useStyles();
     const {wallet} = useWalletContext();
-    const {solanaRPCConnection, solanaContextInitialising} = useSolanaContext();
+    const {solanaRPCConnection, solanaRPCConnectionInitializing} = useSolanaContext();
     const {enqueueSnackbar} = useSnackbar();
     const [newOwnerAccLamportBalance, setNewOwnerAccLamportBalance] = useState(0);
     const [loadingOwnerAccBalance, setLoadingOwnerAccBalance] = useState(false);
@@ -160,7 +160,7 @@ export function MintNewLandNFTsCard() {
     // update new owner account balance
     useLayoutEffect(() => {
         (async () => {
-            if (solanaContextInitialising) {
+            if (solanaRPCConnectionInitializing) {
                 return;
             }
             if (!solanaRPCConnection) {
@@ -181,7 +181,7 @@ export function MintNewLandNFTsCard() {
             }
             setLoadingOwnerAccBalance(false);
         })();
-    }, [mintLandPiecesParams, solanaRPCConnection, reloadOwnerAccBalanceToggle, solanaContextInitialising])
+    }, [mintLandPiecesParams, solanaRPCConnection, reloadOwnerAccBalanceToggle, solanaRPCConnectionInitializing])
 
     // update fees whenever necessary
     useLayoutEffect(() => {
@@ -190,7 +190,7 @@ export function MintNewLandNFTsCard() {
                 return;
             }
 
-            if (solanaContextInitialising) {
+            if (solanaRPCConnectionInitializing) {
                 setLandNFTMetadataAccRentFee(0);
                 setNetworkTransactionFee(0);
                 setUSDTotal('0');
@@ -268,7 +268,7 @@ export function MintNewLandNFTsCard() {
 
             setFeesLoading(false);
         })();
-    }, [mintLandPiecesParams, solanaRPCConnection, solanaContextInitialising]);
+    }, [mintLandPiecesParams, solanaRPCConnection, solanaRPCConnectionInitializing]);
 
     const [mintingInProgress, setMintingInProgress] = useState(false);
     const handleMint = async () => {
