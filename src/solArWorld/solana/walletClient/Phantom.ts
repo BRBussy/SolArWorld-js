@@ -28,8 +28,31 @@ export class PhantomWallet implements Wallet {
         return false;
     }
 
-    connect(): Promise<void> {
-        return Promise.resolve(undefined);
+    async connect(): Promise<void> {
+        // if provider is already set then do nothing
+        if (this._phantomProvider) {
+            return;
+        }
+
+        // check to see if  there is something on the window?
+        let provider: PhantomProvider;
+        if ((window as any)?.solana?.isPhantom) {
+            provider = (window as any).solana;
+        } else {
+            // window.open('https://phantom.app/', '_blank');
+            console.error('error !!!!!!!')
+            return;
+        }
+
+        provider.on('connect', () => {
+            this._phantomProvider = provider;
+        });
+
+        if (!provider.isConnected) {
+            await provider.connect();
+        }
+
+        this._phantomProvider = provider;
     }
 
     disconnect(): Promise<void> {
