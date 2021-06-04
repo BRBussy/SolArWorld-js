@@ -1,5 +1,5 @@
 import {PublicKey, Transaction} from '@solana/web3.js';
-import Wallet from "./Wallet";
+import Wallet, {WalletMetadata} from ".";
 
 export type PhantomEvent = 'disconnect' | 'connect';
 export type PhantomRequestMethod =
@@ -20,9 +20,14 @@ interface PhantomProvider {
     request: (method: PhantomRequestMethod, params: any) => Promise<any>;
 }
 
-export class PhantomWallet implements Wallet {
+// PhantomWallet Singleton
+export const PhantomWallet = new (class implements Wallet {
     private _phantomProvider: PhantomProvider | undefined;
     private _connected: boolean = false;
+
+    metadata(): WalletMetadata {
+        throw new Error('Method not implemented.');
+    }
 
     autoApprove(): boolean {
         return false;
@@ -74,4 +79,4 @@ export class PhantomWallet implements Wallet {
     signTransactions(transactions: Transaction[]): Promise<Transaction[]> {
         return Promise.resolve([]);
     }
-}
+})();

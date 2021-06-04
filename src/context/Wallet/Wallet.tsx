@@ -1,11 +1,16 @@
 import React, {useContext, useLayoutEffect, useState} from 'react';
-import Wallet from "../../solArWorld/Wallet";
 import {SolanaKey} from "../../solArWorld/solana";
 import {Keypair} from "@solana/web3.js";
+import Wallet from "../../solArWorld/solana/wallet";
+
+interface WalletWithDetails {
+    id: string;
+    wallet: Wallet;
+    name: 'string';
+}
 
 interface ContextType {
-    wallet: Wallet;
-    setWallet: (updatedWallet: Wallet) => void;
+    wallets: WalletWithDetails[];
 }
 
 const Context = React.createContext({} as ContextType);
