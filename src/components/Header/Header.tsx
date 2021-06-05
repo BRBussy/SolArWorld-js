@@ -6,8 +6,10 @@ import {Breakpoint} from '@material-ui/core/styles/createBreakpoints';
 import {isWidthUp} from '@material-ui/core/withWidth';
 import cx from 'classnames';
 import {
+    AccountBalanceWallet as WalletIcon,
     Menu, MoreVert
 } from '@material-ui/icons';
+import {useSolanaContext} from "../../context/Solana";
 
 const useStyles = makeStyles((Theme) => ({
     appBar: {
@@ -58,8 +60,7 @@ const useStyles = makeStyles((Theme) => ({
     //
     // solana wallet selection
     //
-    solanaWalletSelection: {
-    }
+    solanaWalletSelection: {}
 }))
 
 function useWidth() {
@@ -83,6 +84,7 @@ interface HeaderProps {
 export default function Header(props: HeaderProps) {
     const classes = useStyles();
     const width = useWidth();
+    const {showSolanaWalletSelector} = useSolanaContext();
 
     if (isWidthUp('md', width)) {
         return (
@@ -102,7 +104,13 @@ export default function Header(props: HeaderProps) {
                         </IconButton>
                     </div>
                     <div className={classes.solanaWalletSelection}>
-                        asdfasdf
+                        <IconButton
+                            size={'small'}
+                            onClick={(event: React.MouseEvent<HTMLElement>) =>
+                                showSolanaWalletSelector(event.currentTarget)}
+                        >
+                            <WalletIcon/>
+                        </IconButton>
                     </div>
                 </Toolbar>
             </AppBar>
