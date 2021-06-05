@@ -226,7 +226,7 @@ export default function Header(props: HeaderProps) {
                                 //
                                 return (
                                     <>
-                                        <WalletConnectingBadge
+                                        <NoWalletBadge
                                             overlap="circle"
                                             anchorOrigin={{
                                                 vertical: 'bottom',
@@ -238,7 +238,7 @@ export default function Header(props: HeaderProps) {
                                             <Avatar>
                                                 <WalletIcon/>
                                             </Avatar>
-                                        </WalletConnectingBadge>
+                                        </NoWalletBadge>
                                         <Typography
                                             children={'No Wallet'}
                                         />
