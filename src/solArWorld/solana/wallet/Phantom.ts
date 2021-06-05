@@ -55,26 +55,37 @@ export const PhantomWallet = new (class PhantomWallet implements Wallet {
             this._phantomProvider = p;
         }
 
+        // prepare function to set this._isConnected
+        const setIsConnected: (v: boolean) => void = (v: boolean) => {
+            this._connected = v;
+        }
+
+
         // return promise to allow calling function to await successful wallet connection
         return new Promise<void>(async function (resolve, reject) {
             // before invoking connect() on the provider hook up callbacks
 
             // on 'connect' event
-            provider.on('connect', ((setProvider: (p: PhantomProvider | undefined) => void) => (() => {
+            provider.on('connect', () => {
                 console.debug('connected to phantom wallet');
-                // set the provider
+
+                // indicate that wallet is connected and set the provider
+                setIsConnected(true);
                 setProvider(provider);
+
                 // and terminate promise with success
                 resolve();
-            }))(setProvider));
+            });
 
             // on 'disconnect' event
             // which is unexpected here since it was not the method being invoked
-            provider.on('disconnect', ((setProvider: (p: PhantomProvider | undefined) => void) => (() => {
+            provider.on('disconnect', () => {
                 console.error('unexpected disconnection from phantom wallet');
-                // clear the provider
+
+                // indicate that wallet is not connected and clear the provider
+                setIsConnected(false);
                 setProvider(undefined);
-            }))(setProvider));
+            });
 
             // invoke the connection
             try {

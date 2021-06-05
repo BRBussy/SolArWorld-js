@@ -26,9 +26,11 @@ function SolanaContext({children}: { children?: React.ReactNode }) {
     useLayoutEffect(() => {
         (async () => {
             try {
+                setSolanaWalletInitialising(true);
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 const firstWallet = solanaWallets[0];
                 await firstWallet.connect();
+                setSolanaWalletInitialising(false);
             } catch (e) {
                 console.error(`error initialising connection to wallet: ${e}`)
             }
