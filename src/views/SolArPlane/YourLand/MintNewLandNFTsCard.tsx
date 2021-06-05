@@ -382,20 +382,27 @@ export function MintNewLandNFTsCard() {
             txn.recentBlockhash = (
                 await solanaRPCConnection.getRecentBlockhash('max')
             ).blockhash;
+            txn.feePayer = solanaSelectedWallet.publicKey();
 
             // add instructions
             instructions.forEach((i) => {
                 txn = txn.add(i)
             })
 
+            console.log('before any sign', txn.signatures);
+
             // sign txn by person who will pay for this
             txn = await solanaSelectedWallet.signTransaction(txn);
+
+            console.log('after phantom sign', txn.signatures)
 
             // sign by all of the accounts being created
             txn.sign(
                 nftMintAcc,
                 nft1stHoldAcc,
             )
+
+            console.log('new acc sign', txn.signatures)
 
             // subscribe to logs
             const subNo = solanaRPCConnection.onLogs(
