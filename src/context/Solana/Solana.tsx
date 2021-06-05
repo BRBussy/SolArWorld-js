@@ -18,10 +18,22 @@ interface ContextType {
 const Context = React.createContext({} as ContextType);
 
 function SolanaContext({children}: { children?: React.ReactNode }) {
+    const [solanaWalletInitialising, setSolanaWalletInitialising] = useState(false);
     const {current: solanaWallets} = useRef([
         PhantomWallet
     ]);
-    const [solanaSelectedWallet, setSolanaSelectedWallet] = useState<SolanaWallet>(solanaWallets[0]);
+    const [solanaSelectedWallet, setSolanaSelectedWallet] = useState<SolanaWallet | undefined>(undefined);
+    useLayoutEffect(() => {
+        (async () => {
+            try {
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                const firstWallet = solanaWallets[0];
+                await firstWallet.connect();
+            } catch (e) {
+                console.error(`error initialising connection to wallet: ${e}`)
+            }
+        })();
+    }, [solanaWallets]);
 
     const [solanaRPCConnectionInitializing, setSolanaRPCConnectionInitializing] = useState(false);
     // const [solanaNetwork, setSolanaNetwork] = useState<SolanaNetwork>(SolanaNetwork.MainnetBeta); FIXME: should be mainnet by default

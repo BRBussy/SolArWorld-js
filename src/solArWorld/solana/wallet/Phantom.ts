@@ -20,8 +20,9 @@ interface PhantomProvider {
     request: (method: PhantomRequestMethod, params: any) => Promise<any>;
 }
 
+
 // PhantomWallet Singleton
-export const PhantomWallet = new (class implements Wallet {
+export const PhantomWallet = new (class PhantomWallet implements Wallet {
     private _phantomProvider: PhantomProvider | undefined;
     private _connected: boolean = false;
 
@@ -34,30 +35,55 @@ export const PhantomWallet = new (class implements Wallet {
     }
 
     async connect(): Promise<void> {
-        // if provider is already set then do nothing
-        if (this._phantomProvider) {
+        // if provider is already set && connected then do nothing
+        if (this._phantomProvider && this._phantomProvider.isConnected) {
             return;
         }
+        // otherwise a connection should be established
 
-        // check to see if  there is something on the window?
+        // check to see if phantom wallet provider is available on window object
         let provider: PhantomProvider;
         if ((window as any)?.solana?.isPhantom) {
             provider = (window as any).solana;
         } else {
-            // window.open('https://phantom.app/', '_blank');
-            console.error('error !!!!!!!')
-            return;
+            throw new Error('phantom wallet provider not available')
         }
 
-        provider.on('connect', () => {
-            this._phantomProvider = provider;
+        // prepare function to set provider
+        const setProvider: (p: PhantomProvider | undefined) => void = (p: PhantomProvider | undefined) => {
+            this._phantomProvider = p;
+        }
+
+        // return promise to allow calling function to await successful wallet connection
+        return new Promise<void>(async function (resolve, reject) {
+            // before invoking connect() on the provider hook up callbacks
+
+            // on 'connect' event
+            provider.on('connect', ((setProvider: (p: PhantomProvider | undefined) => void) => (() => {
+                console.debug('connected to phantom wallet');
+                // set the provider
+                setProvider(provider);
+                // and terminate promise with success
+                resolve();
+            }))(setProvider));
+
+            // on 'disconnect' event
+            // which is unexpected here since it was not the method being invoked
+            provider.on('disconnect', ((setProvider: (p: PhantomProvider | undefined) => void) => (() => {
+                console.error('unexpected disconnection from phantom wallet');
+                // clear the provider
+                setProvider(undefined);
+            }))(setProvider));
+
+            // invoke the connection
+            try {
+                await provider.connect();
+            } catch (e) {
+                // and if any error occurs then terminate promise with error
+                console.error(`error connecting to provider: ${e}`)
+                reject(new Error(`error connecting to provider: ${e}`))
+            }
         });
-
-        if (!provider.isConnected) {
-            await provider.connect();
-        }
-
-        this._phantomProvider = provider;
     }
 
     disconnect(): Promise<void> {
