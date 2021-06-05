@@ -473,7 +473,9 @@ export function MintNewLandNFTsCard() {
                                     >
                                         This account will pay for minting
                                     </Typography>
-                                    {}
+                                    <Typography
+                                        children={solanaSelectedWallet ? solanaSelectedWallet.publicKey().toString() : 'no account available'}
+                                    />
                                 </>,
                                 <>
                                     <div>
