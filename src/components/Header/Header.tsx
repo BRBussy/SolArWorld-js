@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-    makeStyles, AppBar, Toolbar, useMediaQuery, useTheme, IconButton
+    makeStyles, AppBar, Toolbar, useMediaQuery, useTheme, IconButton, Theme
 } from '@material-ui/core';
 import {Breakpoint} from '@material-ui/core/styles/createBreakpoints';
 import {isWidthUp} from '@material-ui/core/withWidth';
@@ -11,7 +11,7 @@ import {
 } from '@material-ui/icons';
 import {useSolanaContext} from "../../context/Solana";
 
-const useStyles = makeStyles((Theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
     appBar: {
         position: 'absolute',
         width: '100%',
@@ -60,7 +60,12 @@ const useStyles = makeStyles((Theme) => ({
     //
     // solana wallet selection
     //
-    solanaWalletSelection: {}
+    solanaWalletSelection: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, auto)',
+        alignItems: 'center',
+        columnGap: theme.spacing(1)
+    }
 }))
 
 function useWidth() {
