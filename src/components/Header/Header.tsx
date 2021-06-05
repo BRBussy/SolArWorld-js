@@ -21,13 +21,16 @@ const useStyles = makeStyles((Theme) => ({
         boxShadow: '0 10px 20px -12px rgba(0, 0, 0, 0.42), 0 3px 20px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2)',
         padding: 0
     },
+
+    //
+    // desktop layout
+    //
     toolbarDesktop: {
         height: '50px',
         minHeight: '50px',
-        display: 'flex'
-    },
-    sidebarMinimize: {
-        float: 'left'
+        display: 'grid',
+        gridTemplateColumns: '1fr auto',
+        alignItems: 'center'
     },
     sidebarMiniIcon: {
         width: '20px',
@@ -36,6 +39,10 @@ const useStyles = makeStyles((Theme) => ({
     desktopViewName: {
         paddingLeft: '10px'
     },
+
+    //
+    // mini layout
+    //
     toolbarMini: {
         height: '50px',
         minHeight: '50px',
@@ -46,6 +53,13 @@ const useStyles = makeStyles((Theme) => ({
         width: '30px',
         verticalAlign: 'middle',
         border: '0'
+    },
+
+    //
+    // solana wallet selection
+    //
+    solanaWalletSelection: {
+        float: 'left'
     }
 }))
 
@@ -77,7 +91,7 @@ export default function Header(props: HeaderProps) {
                 className={cx(classes.appBar)}
             >
                 <Toolbar className={classes.toolbarDesktop}>
-                    <div className={classes.sidebarMinimize}>
+                    <div>
                         <IconButton
                             size={'small'}
                             onClick={props.sidebarMinimize}
@@ -87,6 +101,9 @@ export default function Header(props: HeaderProps) {
                                 : <MoreVert/>
                             }
                         </IconButton>
+                    </div>
+                    <div className={classes.solanaWalletSelection}>
+                        asdfasdf
                     </div>
                 </Toolbar>
             </AppBar>
