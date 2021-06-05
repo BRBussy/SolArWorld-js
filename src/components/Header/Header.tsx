@@ -275,7 +275,7 @@ export default function Header(props: HeaderProps) {
                                         />
                                         {onSolanaTestNet &&
                                         <Tooltip
-                                            title={'Air Drop 1000 SOL into wallet'}
+                                            title={'Air Drop 1 SOL into wallet'}
                                             placement={'top'}
                                         >
                                             <IconButton

@@ -45,7 +45,7 @@ function SolanaContext({children}: { children?: React.ReactNode }) {
 
     const [solanaRPCConnectionInitializing, setSolanaRPCConnectionInitializing] = useState(false);
     // const [solanaNetwork, setSolanaNetwork] = useState<SolanaNetwork>(SolanaNetwork.MainnetBeta); FIXME: should be mainnet by default
-    const [solanaNetwork, setSolanaNetwork] = useState<SolanaNetwork>(SolanaNetwork.LocalTestnet);
+    const [solanaNetwork, setSolanaNetwork] = useState<SolanaNetwork>(SolanaNetwork.Devnet);
     const [solanaRPCConnection, setSolanaRPCConnection] = useState<Connection | undefined>(undefined);
     useLayoutEffect(() => {
         (async () => {

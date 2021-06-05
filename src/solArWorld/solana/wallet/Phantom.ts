@@ -54,7 +54,7 @@ export const PhantomWallet = new (class PhantomWallet implements Wallet {
             throw new Error('phantom wallet provider not available')
         }
 
-        // prepare function to set provider
+        // prepare function to set this._provider
         const setProvider: (p: PhantomProvider | undefined) => void = (p: PhantomProvider | undefined) => {
             this._phantomProvider = p;
         }
@@ -62,6 +62,11 @@ export const PhantomWallet = new (class PhantomWallet implements Wallet {
         // prepare function to set this._isConnected
         const setIsConnected: (v: boolean) => void = (v: boolean) => {
             this._connected = v;
+        }
+
+        // prepare function to set this._publicKey
+        const setPublicKey: (p: PublicKey | undefined) => void = (p: PublicKey | undefined) => {
+            this._publicKey = p;
         }
 
 
@@ -73,7 +78,17 @@ export const PhantomWallet = new (class PhantomWallet implements Wallet {
             provider.on('connect', () => {
                 console.debug('connected to phantom wallet');
 
+                // confirm public key is available
+                if (!provider.publicKey) {
+                    reject(new Error('public key not available on provider'));
+                    setPublicKey(undefined);
+                    setIsConnected(false);
+                    setProvider(undefined);
+                    return;
+                }
+
                 // indicate that wallet is connected and set the provider
+                setPublicKey(provider.publicKey);
                 setIsConnected(true);
                 setProvider(provider);
 
@@ -87,6 +102,7 @@ export const PhantomWallet = new (class PhantomWallet implements Wallet {
                 console.error('unexpected disconnection from phantom wallet');
 
                 // indicate that wallet is not connected and clear the provider
+                setPublicKey(undefined);
                 setIsConnected(false);
                 setProvider(undefined);
             });
