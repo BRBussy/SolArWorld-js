@@ -89,7 +89,11 @@ interface HeaderProps {
 export default function Header(props: HeaderProps) {
     const classes = useStyles();
     const width = useWidth();
-    const {showSolanaWalletSelector} = useSolanaContext();
+    const {
+        solanaSelectedWallet,
+        solanaWalletInitialising,
+        showSolanaWalletSelector,
+    } = useSolanaContext();
 
     if (isWidthUp('md', width)) {
         return (
@@ -109,13 +113,29 @@ export default function Header(props: HeaderProps) {
                         </IconButton>
                     </div>
                     <div className={classes.solanaWalletSelection}>
-                        <IconButton
-                            size={'small'}
-                            onClick={(event: React.MouseEvent<HTMLElement>) =>
-                                showSolanaWalletSelector(event.currentTarget)}
-                        >
-                            <WalletIcon/>
-                        </IconButton>
+                        {(() => {
+                            if (solanaWalletInitialising) {
+                                return (
+                                    <div>initialising...</div>
+                                )
+                            }
+
+                            if (solanaSelectedWallet) {
+                                return (
+                                    <IconButton
+                                        size={'small'}
+                                        onClick={(event: React.MouseEvent<HTMLElement>) =>
+                                            showSolanaWalletSelector(event.currentTarget)}
+                                    >
+                                        <WalletIcon/>
+                                    </IconButton>
+                                )
+                            } else {
+                                return (
+                                    <div>not connected</div>
+                                )
+                            }
+                        })()}
                     </div>
                 </Toolbar>
             </AppBar>
