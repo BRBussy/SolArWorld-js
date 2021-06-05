@@ -310,8 +310,8 @@ export function MintNewLandNFTsCard() {
             const nftMintAccOpeningBal = await solanaRPCConnection.getMinimumBalanceForRentExemption(
                 MintLayout.span,
             );
-            const nft1stHoldAccOpeningBal = await solanaRPCConnection.getMinimumBalanceForRentExemption(
-                AccountLayout.span,
+            const nft1stHoldAccOpeningBal = await Token.getMinBalanceRentForExemptAccount(
+                solanaRPCConnection
             );
 
             // prepare instructions
@@ -342,7 +342,7 @@ export function MintNewLandNFTsCard() {
                     fromPubkey: mintLandPiecesParams.nftTokenAccOwnerAccPubKey,
                     newAccountPubkey: nft1stHoldAcc.publicKey,
                     lamports: nft1stHoldAccOpeningBal,
-                    space: MintLayout.span,
+                    space: AccountLayout.span,
                     programId: TOKEN_PROGRAM_ID,
                 }),
 
@@ -389,20 +389,22 @@ export function MintNewLandNFTsCard() {
                 txn = txn.add(i)
             })
 
-            console.log('before any sign', txn.signatures);
+            // sign txn by person who will pay for this and
+            // extract the required expected signatures
+            // (wild I know - but necessary since signing overwrites :( )
+            const feePayerSig = (await solanaSelectedWallet.signTransaction(txn)).signatures[0];
 
-            // sign txn by person who will pay for this
-            txn = await solanaSelectedWallet.signTransaction(txn);
-
-            console.log('after phantom sign', txn.signatures)
-
-            // sign by all of the accounts being created
+            // sign txn by all accounts being created and get sigs
             txn.sign(
                 nftMintAcc,
                 nft1stHoldAcc,
             )
 
-            console.log('new acc sign', txn.signatures)
+            // signatures back together again
+            txn.signatures = [
+                feePayerSig,
+                ...txn.signatures.slice(1)
+            ]
 
             // subscribe to logs
             const subNo = solanaRPCConnection.onLogs(
@@ -424,7 +426,6 @@ export function MintNewLandNFTsCard() {
 
             // unsubscribe from logs
             await solanaRPCConnection.removeOnLogsListener(subNo);
-
 
             enqueueSnackbar('Land Minted', {variant: 'success'})
         } catch (e) {
