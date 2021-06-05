@@ -9,6 +9,8 @@ interface ContextType {
     solanaWallets: SolanaWallet[];
     solanaSelectedWallet: SolanaWallet | undefined;
     setSelectedSolanaWallet: (provider: string) => void;
+    showSolanaWalletSelectorCard: (anchorEl: HTMLElement) => void;
+    hideSolanaWalletSelectorCard: () => void;
 
     solanaRPCConnectionInitializing: boolean;
     solanaNetwork: SolanaNetwork;
@@ -60,9 +62,18 @@ function SolanaContext({children}: { children?: React.ReactNode }) {
         })();
     }, [solanaNetwork])
 
+    const [walletSelectorCardAnchorEl, setWalletSelectorCardAnchorEl] = useState<null | HTMLElement>(null);
+    const showSolanaWalletSelectorCard = (anchorEl: HTMLElement) => {
+        setWalletSelectorCardAnchorEl(anchorEl);
+    }
+    const hideSolanaWalletSelectorCard = () => {
+        setWalletSelectorCardAnchorEl(null);
+    }
+
     return (
         <Context.Provider
             value={{
+                solanaWalletInitialising,
                 setSelectedSolanaWallet: async (provider: string) => {
                     const w = solanaWallets.find((wn) => (wn.metadata().provider === provider))
                     if (!w) {
@@ -70,13 +81,15 @@ function SolanaContext({children}: { children?: React.ReactNode }) {
                     }
                     setSolanaSelectedWallet(w);
                 },
-                solanaWalletInitialising,
                 solanaWallets,
                 solanaSelectedWallet,
                 solanaNetwork,
+                showSolanaWalletSelectorCard,
+                hideSolanaWalletSelectorCard,
+
+                solanaRPCConnectionInitializing,
                 setSolanaNetwork,
                 solanaRPCConnection,
-                solanaRPCConnectionInitializing,
             }}
         >
             {children}

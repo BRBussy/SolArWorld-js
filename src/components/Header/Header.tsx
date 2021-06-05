@@ -59,7 +59,6 @@ const useStyles = makeStyles((Theme) => ({
     // solana wallet selection
     //
     solanaWalletSelection: {
-        float: 'left'
     }
 }))
 
