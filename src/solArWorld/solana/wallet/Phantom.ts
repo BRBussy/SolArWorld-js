@@ -25,6 +25,7 @@ interface PhantomProvider {
 export const PhantomWallet = new (class PhantomWallet implements Wallet {
     private _phantomProvider: PhantomProvider | undefined;
     private _connected: boolean = false;
+    private _publicKey: PublicKey | undefined;
 
     metadata(): WalletMetadata {
         throw new Error('Method not implemented.');
@@ -91,18 +92,27 @@ export const PhantomWallet = new (class PhantomWallet implements Wallet {
     }
 
     isConnected(): boolean {
-        return false;
+        return this._connected;
     }
 
     publicKey(): PublicKey {
-        throw Error('not implemented');
+        if (!this._publicKey) {
+            throw new Error('public key not set');
+        }
+        return this._publicKey;
     }
 
     signTransaction(transaction: Transaction): Promise<Transaction> {
-        throw Error('not implemented');
+        if (!this._phantomProvider) {
+            throw new Error('provider not set')
+        }
+        return this._phantomProvider.signTransaction(transaction);
     }
 
     signTransactions(transactions: Transaction[]): Promise<Transaction[]> {
-        return Promise.resolve([]);
+        if (!this._phantomProvider) {
+            throw new Error('provider not set')
+        }
+        return this._phantomProvider.signAllTransactions(transactions);
     }
 })();
