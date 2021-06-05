@@ -5,6 +5,7 @@ import {Connection} from '@solana/web3.js'
 import SolanaWallet, {PhantomWallet} from "../../solArWorld/solana/wallet";
 
 interface ContextType {
+    solanaWalletInitialising: boolean;
     solanaWallets: SolanaWallet[];
     solanaSelectedWallet: SolanaWallet | undefined;
     setSelectedSolanaWallet: (provider: string) => void;
@@ -69,6 +70,7 @@ function SolanaContext({children}: { children?: React.ReactNode }) {
                     }
                     setSolanaSelectedWallet(w);
                 },
+                solanaWalletInitialising,
                 solanaWallets,
                 solanaSelectedWallet,
                 solanaNetwork,
