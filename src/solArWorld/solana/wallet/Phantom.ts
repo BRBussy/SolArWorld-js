@@ -63,6 +63,10 @@ export const PhantomWallet = new (class PhantomWallet implements Wallet {
 
         // return promise to allow calling function to await successful wallet connection
         return new Promise<void>(async function (resolve, reject) {
+            setTimeout(() => {
+                reject(new Error('timeout waiting for connection to phantom wallet'));
+            }, 60000);
+
             // before invoking connect() on the provider hook up callbacks
 
             // on 'connect' event
