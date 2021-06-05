@@ -3,6 +3,8 @@ import {SolanaNetwork, solanaNetworkToRPCURL} from "../../solArWorld/solana";
 
 import {Connection} from '@solana/web3.js'
 import SolanaWallet, {PhantomWallet} from "../../solArWorld/solana/wallet";
+import {ListItemIcon, Menu, MenuItem, Typography} from "@material-ui/core";
+import {AccountBalanceWallet as WalletIcon} from '@material-ui/icons'
 
 interface ContextType {
     solanaWalletInitialising: boolean;
@@ -93,6 +95,21 @@ function SolanaContext({children}: { children?: React.ReactNode }) {
             }}
         >
             {children}
+
+            <Menu
+                anchorEl={walletSelectorAnchorEl}
+                keepMounted
+                open={Boolean(walletSelectorAnchorEl)}
+                onClose={hideSolanaWalletSelector}
+                onClick={hideSolanaWalletSelector}
+            >
+                <MenuItem>
+                    <ListItemIcon>
+                        <WalletIcon/>
+                    </ListItemIcon>
+                    <Typography>Phantom</Typography>
+                </MenuItem>
+            </Menu>
         </Context.Provider>
     )
 }
