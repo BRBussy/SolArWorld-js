@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useMemo, useState} from 'react';
 import {
     makeStyles,
     AppBar,
@@ -10,16 +10,19 @@ import {
     Typography,
     Avatar,
     createStyles,
-    withStyles, Badge
+    withStyles, Badge, Tooltip
 } from '@material-ui/core';
 import {Breakpoint} from '@material-ui/core/styles/createBreakpoints';
 import {isWidthUp} from '@material-ui/core/withWidth';
 import cx from 'classnames';
 import {
     AccountBalanceWallet as WalletIcon,
-    Menu, MoreVert
+    Menu, MoreVert, Opacity as AirDropIcon
 } from '@material-ui/icons';
 import {useSolanaContext} from "../../context/Solana";
+import {SolanaNetwork} from "../../solArWorld/solana";
+import {LAMPORTS_PER_SOL} from "@solana/web3.js";
+import {useSnackbar} from "notistack";
 
 const useStyles = makeStyles((theme: Theme) => ({
     appBar: {
@@ -76,7 +79,6 @@ const useStyles = makeStyles((theme: Theme) => ({
         alignItems: 'center',
         columnGap: theme.spacing(1)
     },
-    walletIconAvatar: {}
 }))
 
 function useWidth() {
@@ -173,11 +175,21 @@ interface HeaderProps {
 export default function Header(props: HeaderProps) {
     const classes = useStyles();
     const width = useWidth();
+    const {enqueueSnackbar} = useSnackbar();
+    const [airdropInProgress, setAirDropInProgress] = useState(false);
     const {
         solanaSelectedWallet,
         solanaWalletInitialising,
         showSolanaWalletSelector,
+        solanaRPCConnection,
+        solanaNetwork
     } = useSolanaContext();
+
+    const onSolanaTestNet = useMemo(() => ([
+        SolanaNetwork.Testnet,
+        SolanaNetwork.LocalTestnet,
+        SolanaNetwork.Devnet,
+    ]).includes(solanaNetwork), [solanaNetwork])
 
     if (isWidthUp('md', width)) {
         return (
@@ -261,6 +273,47 @@ export default function Header(props: HeaderProps) {
                                         <Typography
                                             children={`${solanaSelectedWallet.metadata().provider} Connected`}
                                         />
+                                        {onSolanaTestNet &&
+                                        <Tooltip
+                                            title={'Air Drop 1000 SOL into wallet'}
+                                            placement={'top'}
+                                        >
+                                            <IconButton
+                                                size={'small'}
+                                                onClick={async () => {
+                                                    if (!solanaRPCConnection) {
+                                                        console.error('solana rpc connection not set');
+                                                        return;
+                                                    }
+                                                    if (!solanaSelectedWallet) {
+                                                        console.error('solana wallet not set')
+                                                        return;
+                                                    }
+                                                    setAirDropInProgress(true);
+                                                    try {
+                                                        const signature = await solanaRPCConnection.requestAirdrop(
+                                                            solanaSelectedWallet.publicKey(),
+                                                            LAMPORTS_PER_SOL,
+                                                        );
+                                                        await solanaRPCConnection.confirmTransaction(signature);
+                                                        enqueueSnackbar(
+                                                            `Airdrop to ${solanaSelectedWallet.publicKey().toString()} Complete`,
+                                                            {variant: 'success'}
+                                                        )
+                                                    } catch (e) {
+                                                        console.error(`error performing airdrop: ${e}`);
+                                                        enqueueSnackbar(
+                                                            `error performing airdrop: ${e}`,
+                                                            {variant: 'error'}
+                                                        )
+                                                    }
+                                                    setAirDropInProgress(false);
+                                                }}
+                                            >
+                                                <AirDropIcon/>
+                                            </IconButton>
+                                        </Tooltip>
+                                        }
                                     </>
                                 )
                             }
