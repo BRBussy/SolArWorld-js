@@ -378,17 +378,28 @@ export function MintNewLandNFTsCard() {
             ];
 
             // prepare transaction to hold nft minting instructions
-            const txn = new Transaction();
+            let txn = new Transaction();
             txn.recentBlockhash = (
                 await solanaRPCConnection.getRecentBlockhash('max')
             ).blockhash;
 
-            // sign txn
-            const signedTxn = await solanaSelectedWallet.signTransaction(txn);
+            // add instructions
+            instructions.forEach((i) => {
+                txn = txn.add(i)
+            })
+
+            // sign txn by person who will pay for this
+            txn = await solanaSelectedWallet.signTransaction(txn);
+
+            // sign by all of the accounts being created
+            txn.sign(
+                nftMintAcc,
+                nft1stHoldAcc,
+            )
 
             // subscribe to logs
             const subNo = solanaRPCConnection.onLogs(
-                'all',
+                solanaSelectedWallet.publicKey(),
                 (logs: Logs, ctx: Context) => {
                     console.debug(`slot no. ${ctx.slot}`)
                     if (logs.err) {
@@ -399,7 +410,7 @@ export function MintNewLandNFTsCard() {
             )
 
             // submit txn to network
-            const txnSignature = await solanaRPCConnection.sendRawTransaction(signedTxn.serialize());
+            const txnSignature = await solanaRPCConnection.sendRawTransaction(txn.serialize());
 
             // wait for confirmation
             await solanaRPCConnection.confirmTransaction(txnSignature);
