@@ -6,7 +6,7 @@ import {
     CardHeader,
     CircularProgress,
     Grid,
-    Icon,
+    Icon, IconButton,
     makeStyles,
     MenuItem,
     TextField,
@@ -15,7 +15,7 @@ import {
     Typography
 } from "@material-ui/core";
 import {AllQuadrantNumbers, QuadrantNo} from "../../../solArWorld/genesisRegion";
-import {InfoOutlined} from '@material-ui/icons'
+import {InfoOutlined, Refresh as ReloadIcon} from '@material-ui/icons'
 import {useSnackbar} from "notistack";
 import {useSolanaContext} from "../../../context/Solana";
 import {
@@ -523,6 +523,31 @@ export function MintNewLandNFTsCard() {
                                     <Typography
                                         children={solanaSelectedWallet ? solanaSelectedWallet.publicKey().toString() : 'no account available'}
                                     />
+                                    <div className={classes.lineItemWithHelpIcon}>
+                                        <Typography
+                                            variant={'subtitle2'}
+                                            className={cx({
+                                                [classes.disabledText]: loadingOwnerAccBalance,
+                                                [classes.errorText]: insufficientBalance && !loadingOwnerAccBalance,
+                                                [classes.successText]: !(insufficientBalance || loadingOwnerAccBalance)
+                                            })}
+                                            color={(newOwnerAccLamportBalance < (networkTransactionFee + landNFTMetadataAccRentFee)) ? 'error' : undefined}
+                                            children={`This account holds SOL ${(newOwnerAccLamportBalance / LAMPORTS_PER_SOL).toFixed(10)}`}
+                                        />
+                                        <div>
+                                            {loadingOwnerAccBalance
+                                                ? (<CircularProgress size={30}/>)
+                                                : (
+                                                    <IconButton
+                                                        onClick={() => setReloadOwnerAccBalanceToggle(!reloadOwnerAccBalanceToggle)}
+                                                        size={'small'}
+                                                    >
+                                                        <ReloadIcon/>
+                                                    </IconButton>
+                                                )
+                                            }
+                                        </div>
+                                    </div>
                                 </>,
                                 <>
                                     <div>
