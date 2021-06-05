@@ -18,7 +18,15 @@ import {AllQuadrantNumbers, QuadrantNo} from "../../../solArWorld/genesisRegion"
 import {InfoOutlined} from '@material-ui/icons'
 import {useSnackbar} from "notistack";
 import {useSolanaContext} from "../../../context/Solana";
-import {Keypair, LAMPORTS_PER_SOL, SystemProgram, Transaction, TransactionInstruction} from "@solana/web3.js";
+import {
+    Context,
+    Keypair,
+    LAMPORTS_PER_SOL,
+    Logs,
+    SystemProgram,
+    Transaction,
+    TransactionInstruction
+} from "@solana/web3.js";
 import {TOKEN_PROGRAM_ID, MintLayout, AccountLayout, Token} from "@solana/spl-token"
 import {
     MAX_NO_LAND_PIECES,
@@ -280,6 +288,10 @@ export function MintNewLandNFTsCard() {
             console.error('params are not set');
             return;
         }
+        if (!solanaSelectedWallet) {
+            console.error('no wallet connected')
+            return;
+        }
         setMintingInProgress(true);
         try {
             // Process for minting nft is as follows:
@@ -370,6 +382,30 @@ export function MintNewLandNFTsCard() {
             txn.recentBlockhash = (
                 await solanaRPCConnection.getRecentBlockhash('max')
             ).blockhash;
+
+            // sign txn
+            const signedTxn = await solanaSelectedWallet.signTransaction(txn);
+
+            // subscribe to logs
+            const subNo = solanaRPCConnection.onLogs(
+                'all',
+                (logs: Logs, ctx: Context) => {
+                    console.debug(`slot no. ${ctx.slot}`)
+                    if (logs.err) {
+                        console.error(logs.err.toString())
+                    }
+                    logs.logs.forEach((l) => console.debug(l));
+                }
+            )
+
+            // submit txn to network
+            const txnSignature = await solanaRPCConnection.sendRawTransaction(signedTxn.serialize());
+
+            // wait for confirmation
+            await solanaRPCConnection.confirmTransaction(txnSignature);
+
+            // unsubscribe from logs
+            await solanaRPCConnection.removeOnLogsListener(subNo);
 
 
             enqueueSnackbar('Land Minted', {variant: 'success'})
