@@ -7,7 +7,6 @@ import {
     CircularProgress,
     Grid,
     Icon,
-    IconButton,
     makeStyles,
     MenuItem,
     TextField,
@@ -16,8 +15,7 @@ import {
     Typography
 } from "@material-ui/core";
 import {AllQuadrantNumbers, QuadrantNo} from "../../../solArWorld/genesisRegion";
-import {InfoOutlined, Refresh as ReloadIcon} from '@material-ui/icons'
-import {useWalletContext} from "../../../context/Wallet";
+import {InfoOutlined} from '@material-ui/icons'
 import {useSnackbar} from "notistack";
 import {useSolanaContext} from "../../../context/Solana";
 import {Keypair, LAMPORTS_PER_SOL, SystemProgram, Transaction, TransactionInstruction} from "@solana/web3.js";
@@ -104,8 +102,11 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export function MintNewLandNFTsCard() {
     const classes = useStyles();
-    const {wallet} = useWalletContext();
-    const {solanaRPCConnection, solanaRPCConnectionInitializing} = useSolanaContext();
+    const {
+        solanaRPCConnection,
+        solanaRPCConnectionInitializing,
+        solanaSelectedWallet
+    } = useSolanaContext();
     const {enqueueSnackbar} = useSnackbar();
     const [newOwnerAccLamportBalance, setNewOwnerAccLamportBalance] = useState(0);
     const [loadingOwnerAccBalance, setLoadingOwnerAccBalance] = useState(false);
@@ -121,18 +122,18 @@ export function MintNewLandNFTsCard() {
 
     // initialise the mint land pieces params on screen load
     useLayoutEffect(() => {
-        if (!wallet.solanaKeys.length) {
+        if (!solanaSelectedWallet) {
             return;
         }
 
         const initialMintLandPiecesParams: MintLandPiecesParams = {
             quadrantNo: QuadrantNo.One,
-            nftTokenAccOwnerAccPubKey: wallet.solanaKeys[0].solanaKeyPair.publicKey,
+            nftTokenAccOwnerAccPubKey: solanaSelectedWallet.publicKey(),
             noOfPiecesToMint: 1
         }
 
         setMintLandPiecesParams(initialMintLandPiecesParams)
-    }, [wallet.solanaKeys])
+    }, [solanaSelectedWallet])
 
     // handle updating MintLandPiecesParams
     const handleUpdateMintLandPiecesParams = (field: string) => async (newValue: any) => {
@@ -472,61 +473,7 @@ export function MintNewLandNFTsCard() {
                                     >
                                         This account will pay for minting
                                     </Typography>
-                                    {(!!wallet.solanaKeys.length)
-                                        ? (
-                                            <>
-                                                <TextField
-                                                    select
-                                                    disabled={loading}
-                                                    label={'New Land Owner Account'}
-                                                    value={mintLandPiecesParams.nftTokenAccOwnerAccPubKey.toString()}
-                                                    onChange={(e) => {
-                                                        const solKey = wallet.solanaKeys.find((k) => (k.solanaKeyPair.publicKey.toString() === e.target.value))
-                                                        if (!solKey) {
-                                                            console.error(`could not find solana key in wallet with public key: ${e.target.value}`);
-                                                            return;
-                                                        }
-                                                        handleUpdateMintLandPiecesParams('nftTokenAccOwnerAccPubKey')(solKey.solanaKeyPair.publicKey)
-                                                    }}
-                                                >
-                                                    {wallet.solanaKeys.map((k, idx) => (
-                                                        <MenuItem key={idx}
-                                                                  value={k.solanaKeyPair.publicKey.toString()}>
-                                                            {k.solanaKeyPair.publicKey.toString()}
-                                                        </MenuItem>
-                                                    ))}
-                                                </TextField>
-                                                <div className={classes.lineItemWithHelpIcon}>
-                                                    <Typography
-                                                        variant={'subtitle2'}
-                                                        className={cx({
-                                                            [classes.disabledText]: loadingOwnerAccBalance,
-                                                            [classes.errorText]: insufficientBalance && !loadingOwnerAccBalance,
-                                                            [classes.successText]: !(insufficientBalance || loadingOwnerAccBalance)
-                                                        })}
-                                                        color={(newOwnerAccLamportBalance < (networkTransactionFee + landNFTMetadataAccRentFee)) ? 'error' : undefined}
-                                                        children={`This account holds SOL ${(newOwnerAccLamportBalance / LAMPORTS_PER_SOL).toFixed(10)}`}
-                                                    />
-                                                    <div>
-                                                        {loadingOwnerAccBalance
-                                                            ? (<CircularProgress size={30}/>)
-                                                            : (
-                                                                <IconButton
-                                                                    onClick={() => setReloadOwnerAccBalanceToggle(!reloadOwnerAccBalanceToggle)}
-                                                                    size={'small'}
-                                                                >
-                                                                    <ReloadIcon/>
-                                                                </IconButton>
-                                                            )
-                                                        }
-                                                    </div>
-                                                </div>
-                                            </>
-                                        )
-                                        : (
-                                            <div>{'no keys available'}</div>
-                                        )
-                                    }
+                                    {}
                                 </>,
                                 <>
                                     <div>
