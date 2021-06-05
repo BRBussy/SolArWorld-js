@@ -9,8 +9,8 @@ interface ContextType {
     solanaWallets: SolanaWallet[];
     solanaSelectedWallet: SolanaWallet | undefined;
     setSelectedSolanaWallet: (provider: string) => void;
-    showSolanaWalletSelectorCard: (anchorEl: HTMLElement) => void;
-    hideSolanaWalletSelectorCard: () => void;
+    showSolanaWalletSelector: (anchorEl: HTMLElement) => void;
+    hideSolanaWalletSelector: () => void;
 
     solanaRPCConnectionInitializing: boolean;
     solanaNetwork: SolanaNetwork;
@@ -62,12 +62,12 @@ function SolanaContext({children}: { children?: React.ReactNode }) {
         })();
     }, [solanaNetwork])
 
-    const [walletSelectorCardAnchorEl, setWalletSelectorCardAnchorEl] = useState<null | HTMLElement>(null);
-    const showSolanaWalletSelectorCard = (anchorEl: HTMLElement) => {
-        setWalletSelectorCardAnchorEl(anchorEl);
+    const [walletSelectorAnchorEl, setWalletSelectorAnchorEl] = useState<null | HTMLElement>(null);
+    const showSolanaWalletSelector = (anchorEl: HTMLElement) => {
+        setWalletSelectorAnchorEl(anchorEl);
     }
-    const hideSolanaWalletSelectorCard = () => {
-        setWalletSelectorCardAnchorEl(null);
+    const hideSolanaWalletSelector = () => {
+        setWalletSelectorAnchorEl(null);
     }
 
     return (
@@ -84,8 +84,8 @@ function SolanaContext({children}: { children?: React.ReactNode }) {
                 solanaWallets,
                 solanaSelectedWallet,
                 solanaNetwork,
-                showSolanaWalletSelectorCard,
-                hideSolanaWalletSelectorCard,
+                showSolanaWalletSelector,
+                hideSolanaWalletSelector,
 
                 solanaRPCConnectionInitializing,
                 setSolanaNetwork,
