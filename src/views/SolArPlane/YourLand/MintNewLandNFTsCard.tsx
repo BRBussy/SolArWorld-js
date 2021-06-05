@@ -23,7 +23,6 @@ import {useSolanaContext} from "../../../context/Solana";
 import {Keypair, LAMPORTS_PER_SOL, SystemProgram, Transaction, TransactionInstruction} from "@solana/web3.js";
 import {TOKEN_PROGRAM_ID, MintLayout, AccountLayout, Token} from "@solana/spl-token"
 import {
-    LAND_NFT_DECORATOR_ACC_SIZE,
     MAX_NO_LAND_PIECES,
     MintLandPiecesParams
 } from "../../../solArWorld/solana/smartContracts";

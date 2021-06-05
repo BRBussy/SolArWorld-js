@@ -16,8 +16,6 @@ export type MintLandPiecesParams = {
 
 export const LAND_PLANE_ACC_SIZE = 10
 
-export const LAND_NFT_DECORATOR_ACC_SIZE = 10
-
 export const MAX_NO_LAND_PIECES = 10
 
 export interface LandProgramSmartContract {
