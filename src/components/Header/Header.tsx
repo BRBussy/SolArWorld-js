@@ -1,6 +1,16 @@
 import React from 'react';
 import {
-    makeStyles, AppBar, Toolbar, useMediaQuery, useTheme, IconButton, Theme
+    makeStyles,
+    AppBar,
+    Toolbar,
+    useMediaQuery,
+    useTheme,
+    IconButton,
+    Theme,
+    Typography,
+    Avatar,
+    createStyles,
+    withStyles, Badge
 } from '@material-ui/core';
 import {Breakpoint} from '@material-ui/core/styles/createBreakpoints';
 import {isWidthUp} from '@material-ui/core/withWidth';
@@ -65,7 +75,8 @@ const useStyles = makeStyles((theme: Theme) => ({
         gridTemplateColumns: 'repeat(3, auto)',
         alignItems: 'center',
         columnGap: theme.spacing(1)
-    }
+    },
+    walletIconAvatar: {}
 }))
 
 function useWidth() {
@@ -79,6 +90,79 @@ function useWidth() {
         }, null) || 'xs'
     );
 }
+
+const WalletConnectingBadge = withStyles((theme: Theme) =>
+    createStyles({
+        badge: {
+            backgroundColor: theme.palette.success.main,
+            color: theme.palette.success.main,
+            boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+            '&::after': {
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                borderRadius: '50%',
+                animation: '$ripple 1.2s infinite ease-in-out',
+                border: '1px solid currentColor',
+                content: '""',
+            },
+        },
+        '@keyframes ripple': {
+            '0%': {
+                transform: 'scale(.8)',
+                opacity: 1,
+            },
+            '100%': {
+                transform: 'scale(2.4)',
+                opacity: 0,
+            },
+        },
+    }),
+)(Badge);
+
+const NoWalletBadge = withStyles((theme: Theme) =>
+    createStyles({
+        badge: {
+            backgroundColor: theme.palette.error.main,
+            color: theme.palette.error.main,
+            boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+            '&::after': {
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                borderRadius: '50%',
+                animation: '$ripple 1.2s infinite ease-in-out',
+                border: '1px solid currentColor',
+                content: '""',
+            },
+        }
+    }),
+)(Badge);
+
+const WalletConnectedBadge = withStyles((theme: Theme) =>
+    createStyles({
+        badge: {
+            backgroundColor: theme.palette.success.main,
+            color: theme.palette.success.main,
+            boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+            '&::after': {
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                borderRadius: '50%',
+                animation: '$ripple 1.2s infinite ease-in-out',
+                border: '1px solid currentColor',
+                content: '""',
+            },
+        }
+    }),
+)(Badge);
 
 interface HeaderProps {
     miniActive: boolean;
@@ -116,23 +200,68 @@ export default function Header(props: HeaderProps) {
                         {(() => {
                             if (solanaWalletInitialising) {
                                 return (
-                                    <div>initialising...</div>
+                                    <>
+                                        <WalletConnectingBadge
+                                            overlap="circle"
+                                            anchorOrigin={{
+                                                vertical: 'bottom',
+                                                horizontal: 'right',
+                                            }}
+                                            variant="dot"
+                                            onClick={(event: React.MouseEvent<HTMLElement>) => showSolanaWalletSelector(event.currentTarget)}
+                                        >
+                                            <Avatar>
+                                                <WalletIcon/>
+                                            </Avatar>
+                                        </WalletConnectingBadge>
+                                        <Typography
+                                            children={`Wallet Connecting`}
+                                        />
+                                    </>
                                 )
                             }
 
-                            if (solanaSelectedWallet) {
+                            // if no solana wallet is set
+                            if (!solanaSelectedWallet) {
+                                //
                                 return (
-                                    <IconButton
-                                        size={'small'}
-                                        onClick={(event: React.MouseEvent<HTMLElement>) =>
-                                            showSolanaWalletSelector(event.currentTarget)}
-                                    >
-                                        <WalletIcon/>
-                                    </IconButton>
+                                    <>
+                                        <WalletConnectingBadge
+                                            overlap="circle"
+                                            anchorOrigin={{
+                                                vertical: 'bottom',
+                                                horizontal: 'right',
+                                            }}
+                                            variant="dot"
+                                            onClick={(event: React.MouseEvent<HTMLElement>) => showSolanaWalletSelector(event.currentTarget)}
+                                        >
+                                            <Avatar>
+                                                <WalletIcon/>
+                                            </Avatar>
+                                        </WalletConnectingBadge>
+                                        <Typography
+                                            children={'No Wallet'}
+                                        />
+                                    </>
                                 )
                             } else {
                                 return (
-                                    <div>not connected</div>
+                                    <>
+                                        <WalletConnectedBadge
+                                            overlap="circle"
+                                            anchorOrigin={{
+                                                vertical: 'bottom',
+                                                horizontal: 'right',
+                                            }}
+                                            variant="dot"
+                                            onClick={(event: React.MouseEvent<HTMLElement>) => showSolanaWalletSelector(event.currentTarget)}
+                                        >
+                                            <Avatar alt="wallet" src={solanaSelectedWallet.metadata().iconURL}/>
+                                        </WalletConnectedBadge>
+                                        <Typography
+                                            children={`${solanaSelectedWallet.metadata().provider} Connected`}
+                                        />
+                                    </>
                                 )
                             }
                         })()}
