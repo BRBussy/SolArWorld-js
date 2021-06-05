@@ -2,9 +2,9 @@ import {PhantomWallet} from "./Phantom";
 import {PublicKey, Transaction} from '@solana/web3.js';
 
 export interface WalletMetadata {
-    name: string;
     provider: string;
-    imageURL: string;
+    iconURL: string;
+    websiteURL: string;
 }
 
 interface Wallet {

@@ -28,7 +28,11 @@ export const PhantomWallet = new (class PhantomWallet implements Wallet {
     private _publicKey: PublicKey | undefined;
 
     metadata(): WalletMetadata {
-        throw new Error('Method not implemented.');
+        return {
+            provider: "Phantom",
+            iconURL: "https://www.phantom.app/img/logo.png",
+            websiteURL: "https://www.phantom.app",
+        };
     }
 
     autoApprove(): boolean {
