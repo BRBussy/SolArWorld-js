@@ -17,18 +17,29 @@ const onSceneReady = async (scene: Scene) => {
     const canvas = scene.getEngine().getRenderingCanvas();
 
     // create a camera and attach controls
-    const camera = new ArcRotateCamera("camera", -Math.PI / 2, Math.PI / 2.5, 3, new Vector3(0, 0, 0), scene);
+    const camera = new ArcRotateCamera(
+        "camera",
+        Math.PI/4, Math.PI/4, 10,
+        new Vector3(0, 0, 0),
+        scene
+    );
     camera.attachControl(canvas, true);
 
     // prepare a light
-    new HemisphericLight("light", new Vector3(0, 1, 0), scene);
+    new HemisphericLight("light", new Vector3(0, 50, 0), scene);
 
-    await SceneLoader.ImportMeshAsync(
+    // load mesh data
+    const result = await SceneLoader.ImportMeshAsync(
         ["ground", "semi_house"],
         "https://assets.babylonjs.com/meshes/",
         "both_houses_scene.babylon",
         scene,
     );
+
+    // position
+    result.meshes[1].position.x = 0;
+    result.meshes[1].position.z = 0;
+    result.meshes[1].position.y = 0;
 };
 
 /**
