@@ -1,37 +1,34 @@
 import React from "react";
-import {FreeCamera, Vector3, HemisphericLight, MeshBuilder, Scene} from "@babylonjs/core";
+import {Vector3, HemisphericLight, MeshBuilder, Scene, ArcRotateCamera, SceneLoader} from "@babylonjs/core";
 import {SceneComponent} from "../../components/Babylon";
 import {makeStyles} from "@material-ui/core/styles";
 import {Theme} from "@material-ui/core"; // uses above component in same directory
 
 let box: any;
 
-const onSceneReady = (scene: Scene) => {
-    // This creates and positions a free camera (non-mesh)
-    var camera = new FreeCamera("camera1", new Vector3(0, 5, -10), scene);
-
-    // This targets the camera to scene origin
-    camera.setTarget(Vector3.Zero());
-
+// Always need at least the following:
+//  scene: to contain the world or model
+//  camera: to view it
+//  light: to illuminate it
+// object(s): stuff(s) to look at
+//
+const onSceneReady = async (scene: Scene) => {
+    // get a handle on the canvas to attach controls
     const canvas = scene.getEngine().getRenderingCanvas();
 
-    // This attaches the camera to the canvas
+    // create a camera and attach controls
+    const camera = new ArcRotateCamera("camera", -Math.PI / 2, Math.PI / 2.5, 3, new Vector3(0, 0, 0), scene);
     camera.attachControl(canvas, true);
 
-    // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
-    var light = new HemisphericLight("light", new Vector3(0, 1, 0), scene);
+    // prepare a light
+    new HemisphericLight("light", new Vector3(0, 1, 0), scene);
 
-    // Default intensity is 1. Let's dim the light a small amount
-    light.intensity = 0.7;
-
-    // Our built-in 'box' shape.
-    box = MeshBuilder.CreateBox("box", {size: 2}, scene);
-
-    // Move the box upward 1/2 its height
-    box.position.y = 1;
-
-    // Our built-in 'ground' shape.
-    MeshBuilder.CreateGround("ground", {width: 6, height: 6}, scene);
+    await SceneLoader.ImportMeshAsync(
+        ["ground", "semi_house"],
+        "https://assets.babylonjs.com/meshes/",
+        "both_houses_scene.babylon",
+        scene,
+    );
 };
 
 /**

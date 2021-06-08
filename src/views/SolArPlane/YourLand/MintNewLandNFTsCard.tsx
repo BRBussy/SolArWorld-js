@@ -22,7 +22,7 @@ import {
     Context,
     Keypair,
     LAMPORTS_PER_SOL,
-    Logs,
+    Logs, PublicKey,
     SystemProgram,
     Transaction,
     TransactionInstruction
@@ -326,7 +326,6 @@ export function MintNewLandNFTsCard() {
                     space: MintLayout.span,
                     programId: TOKEN_PROGRAM_ID,
                 }),
-
                 // Initialise nft mint account
                 Token.createInitMintInstruction(
                     TOKEN_PROGRAM_ID,
@@ -772,4 +771,10 @@ export function MintNewLandNFTsCard() {
             </CardContent>
         </Card>
     )
+}
+
+interface SuccessfulLandPieceMintReport {
+    nftMintAcc: PublicKey;
+    nft1stHoldingAcc: PublicKey;
+    nft1stHoldingAccOwner: PublicKey;
 }
