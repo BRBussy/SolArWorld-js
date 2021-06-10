@@ -40,6 +40,7 @@ const onSceneReady = async (scene: Scene) => {
             depth: 3
         },
     )
+    box1.position.x = -2;
     box1.position.y = 1;
 
     const box2 = MeshBuilder.CreateBox(
@@ -49,7 +50,7 @@ const onSceneReady = async (scene: Scene) => {
             depth: 3
         },
     )
-    box2.position.x = 2
+    box2.position.x = 0;
     box2.position.y = 1;
 
     const box3 = MeshBuilder.CreateBox(
@@ -59,7 +60,7 @@ const onSceneReady = async (scene: Scene) => {
             depth: 3
         },
     )
-    box3.position.x = 4
+    box3.position.x = 2
     box3.position.y = 1;
 };
 
