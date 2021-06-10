@@ -30,29 +30,6 @@ const onSceneReady = async (scene: Scene) => {
     new HemisphericLight("light", new Vector3(0, 50, 0), scene);
 
     MeshBuilder.CreateGround("ground", {width: 10, height: 10});
-
-    const blob = await downloadBlob(
-        'https://storage.googleapis.com/sol-ar-world/cello.mp3'
-    );
-
-    let sound: Sound;
-    sound = new Sound(
-        'Cello',
-        await blob.arrayBuffer(),
-        scene,
-        () => {
-            if (!sound.isReady()) {
-                console.error('sound is not ready to play');
-                return;
-            }
-            try {
-                console.log('playing sound');
-                sound.play();
-            } catch (e) {
-                console.error(`error playing sound: ${e}`)
-            }
-        },
-    );
 };
 
 /**
