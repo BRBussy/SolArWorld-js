@@ -20,7 +20,7 @@ const onSceneReady = async (scene: Scene) => {
     // create a camera and attach controls
     const camera = new ArcRotateCamera(
         "camera",
-        Math.PI / 4, Math.PI / 4, 10,
+        -Math.PI / 2, Math.PI / 4, 10,
         new Vector3(0, 0, 0),
         scene
     );
@@ -29,7 +29,38 @@ const onSceneReady = async (scene: Scene) => {
     // prepare a light
     new HemisphericLight("light", new Vector3(0, 50, 0), scene);
 
+    // place that ground
     MeshBuilder.CreateGround("ground", {width: 10, height: 10});
+
+    // make some boxes brah
+    const box1 = MeshBuilder.CreateBox(
+        'box1', {
+            width: 1,
+            height: 2,
+            depth: 3
+        },
+    )
+    box1.position.y = 1;
+
+    const box2 = MeshBuilder.CreateBox(
+        'box2', {
+            width: 1,
+            height: 2,
+            depth: 3
+        },
+    )
+    box2.position.x = 2
+    box2.position.y = 1;
+
+    const box3 = MeshBuilder.CreateBox(
+        'box3', {
+            width: 1,
+            height: 2,
+            depth: 3
+        },
+    )
+    box3.position.x = 4
+    box3.position.y = 1;
 };
 
 /**
