@@ -4,8 +4,7 @@ export async function downloadBlob(url: string, headers?: Headers): Promise<Blob
         {
             headers: headers,
             method: 'GET',
-            mode: 'cors',
-            credentials: 'include'
+            mode: 'cors'
         },
     );
 

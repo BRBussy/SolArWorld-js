@@ -2,7 +2,7 @@ import React from "react";
 import {Vector3, HemisphericLight, MeshBuilder, Scene, ArcRotateCamera, Sound} from "@babylonjs/core";
 import {SceneComponent} from "../../components/Babylon";
 import {makeStyles} from "@material-ui/core/styles";
-import {Theme} from "@material-ui/core";
+import {Button, Card, CardContent, Theme} from "@material-ui/core";
 import {downloadBlob} from "../../utilities/network";
 
 let box: any;
@@ -30,10 +30,6 @@ const onSceneReady = async (scene: Scene) => {
     new HemisphericLight("light", new Vector3(0, 50, 0), scene);
 
     MeshBuilder.CreateGround("ground", {width: 10, height: 10});
-
-    const blob = await downloadBlob(
-        'https://storage.googleapis.com/sol-ar-world/cello.mp3'
-    );
 
     // let sound: Sound;
     // sound = new Sound(
@@ -75,6 +71,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     canvas: {
         width: 'calc(100vw - 260px)',
         height: 'calc(100vh - 54px)',
+    },
+    controlPanel: {
+        position: 'absolute',
+        top: 100,
+        left: 100
     }
 }))
 
@@ -83,6 +84,19 @@ export default function SolArWorld() {
 
     return (
         <div className={classes.root}>
+            <Card className={classes.controlPanel}>
+                <CardContent>
+                    <Button
+                        children={'do thing'}
+                        onClick={async () => {
+                            console.log('download blobby')
+                            const blob = await downloadBlob(
+                                'https://storage.googleapis.com/sol-ar-world/cello.mp3'
+                            );
+                        }}
+                    />
+                </CardContent>
+            </Card>
             <SceneComponent
                 canvasClassName={classes.canvas}
                 antialias
