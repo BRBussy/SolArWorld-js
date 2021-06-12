@@ -45,17 +45,10 @@ const onSceneReady = async (scene: Scene) => {
     groundMat.diffuseColor = new Color3(0, 1, 0);
 
     /******** Materials - Textured ********/
-    const boxMat = new StandardMaterial('boxMat', scene);
-    boxMat.diffuseTexture = new Texture(
-        "https://assets.babylonjs.com/environments/semihouse.png", scene,
-    )
-    // prep box faceUV for box image
-    const faceUV = [];
-    faceUV[0] = new Vector4(0.5, 0.0, 1.0, 1.0); //rear face
-    faceUV[1] = new Vector4(0.0, 0.0, 0.5, 1.0); //front face
-    faceUV[2] = new Vector4(0.25, 0, 0.5, 1.0); //right side
-    faceUV[3] = new Vector4(0.75, 0, 1.0, 1.0); //left side
-    // top 4 and bottom 5 not seen so not set
+    // const boxMat = new StandardMaterial('boxMat', scene);
+    // boxMat.diffuseTexture = new Texture(
+    //     "https://assets.babylonjs.com/environments/semihouse.png", scene,
+    // )
 
     const roofMat = new StandardMaterial('roofMat', scene);
     roofMat.diffuseTexture = new Texture(
@@ -66,10 +59,6 @@ const onSceneReady = async (scene: Scene) => {
     /******** World Objects ********/
 
     buildGround(scene);
-    const box = buildBox(scene);
-    const roof = buildRoof(scene);
-
-    const house = Mesh.MergeMeshes([box, roof], true, false, undefined, false, true);
 };
 
 const buildGround = (s: Scene): Mesh => {
