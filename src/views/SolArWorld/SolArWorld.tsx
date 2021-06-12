@@ -45,21 +45,30 @@ const onSceneReady = async (scene: Scene) => {
     groundMat.diffuseColor = new Color3(0, 1, 0);
 
     /******** Materials - Textured ********/
-    // const boxMat = new StandardMaterial('boxMat', scene);
-    // boxMat.diffuseTexture = new Texture(
-    //     "https://assets.babylonjs.com/environments/semihouse.png", scene,
-    // )
+        // const boxMat = new StandardMaterial('boxMat', scene);
+        // boxMat.diffuseTexture = new Texture(
+        //     "https://assets.babylonjs.com/environments/semihouse.png", scene,
+        // )
 
     const roofMat = new StandardMaterial('roofMat', scene);
     roofMat.diffuseTexture = new Texture(
         "https://assets.babylonjs.com/environments/roof.jpg", scene
     );
 
+    const beaconBlob = await downloadBlob(
+        'https://storage.googleapis.com/sol-ar-world/beacon.obj'
+    );
+    console.log('got the blobby!')
+
 
     /******** World Objects ********/
 
     buildGround(scene);
 };
+
+const loadModel = async (s: Scene) => {
+
+}
 
 const buildGround = (s: Scene): Mesh => {
     //color

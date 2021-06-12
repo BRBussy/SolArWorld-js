@@ -8,7 +8,5 @@ export async function downloadBlob(url: string, headers?: Headers): Promise<Blob
         },
     );
 
-    console.log(response)
-
     return await response.blob();
 }
