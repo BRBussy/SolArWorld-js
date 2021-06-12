@@ -1,5 +1,14 @@
 import React from "react";
-import {Vector3, HemisphericLight, MeshBuilder, Scene, ArcRotateCamera, Sound} from "@babylonjs/core";
+import {
+    Vector3,
+    HemisphericLight,
+    MeshBuilder,
+    Scene,
+    ArcRotateCamera,
+    Sound,
+    StandardMaterial,
+    Color3, Texture
+} from "@babylonjs/core";
 import {SceneComponent} from "../../components/Babylon";
 import {makeStyles} from "@material-ui/core/styles";
 import {Button, Card, CardContent, Theme} from "@material-ui/core";
@@ -20,7 +29,7 @@ const onSceneReady = async (scene: Scene) => {
     // create a camera and attach controls
     const camera = new ArcRotateCamera(
         "camera",
-        -Math.PI / 2, Math.PI / 4, 10,
+        -Math.PI / 2, Math.PI / 2.5, 10,
         new Vector3(0, 0, 0),
         scene
     );
@@ -29,39 +38,27 @@ const onSceneReady = async (scene: Scene) => {
     // prepare a light
     new HemisphericLight("light", new Vector3(0, 50, 0), scene);
 
-    // place that ground
-    MeshBuilder.CreateGround("ground", {width: 10, height: 10});
+    // set up the ground
+    const ground = MeshBuilder.CreateGround("ground", {width: 10, height: 10});
+    const groundMat = new StandardMaterial('groundMat', scene);
+    groundMat.diffuseColor = new Color3(0, 1, 0);
+    ground.material = groundMat;
 
-    // make some boxes brah
-    const box1 = MeshBuilder.CreateBox(
-        'box1', {
-            width: 1,
-            height: 2,
-            depth: 3
-        },
-    )
-    box1.position.x = -2;
-    box1.position.y = 1;
+    // setup some textured materials for the box and roof
+    const roofMat = new StandardMaterial('roofMat', scene);
+    roofMat.diffuseTexture = new Texture(
+        'https://storage.googleapis.com/sol-ar-world/roof.jpeg', scene
+    );
 
-    const box2 = MeshBuilder.CreateBox(
-        'box2', {
-            width: 1,
-            height: 2,
-            depth: 3
-        },
-    )
-    box2.position.x = 0;
-    box2.position.y = 1;
 
-    const box3 = MeshBuilder.CreateBox(
-        'box3', {
-            width: 1,
-            height: 2,
-            depth: 3
-        },
-    )
-    box3.position.x = 2
-    box3.position.y = 1;
+    const box = MeshBuilder.CreateBox("box", {});
+    box.position.y = 0.5;
+    const roof = MeshBuilder.CreateCylinder("roof", {diameter: 1.3, height: 1.5, tessellation: 3});
+    roof.material = roofMat;
+    roof.scaling.x = 0.75;
+    roof.rotation.z = Math.PI / 2;
+    roof.rotation.y = Math.PI / 2;
+    roof.position.y = 1.22;
 };
 
 /**
