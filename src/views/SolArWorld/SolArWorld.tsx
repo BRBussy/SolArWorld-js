@@ -7,7 +7,7 @@ import {
     ArcRotateCamera,
     Sound,
     StandardMaterial,
-    Color3, Texture
+    Color3, Texture, Vector4, Mesh
 } from "@babylonjs/core";
 import {SceneComponent} from "../../components/Babylon";
 import {makeStyles} from "@material-ui/core/styles";
@@ -44,31 +44,80 @@ const onSceneReady = async (scene: Scene) => {
     groundMat.diffuseColor = new Color3(0, 1, 0);
 
     /******** Materials - Textured ********/
+    const boxMat = new StandardMaterial('boxMat', scene);
+    boxMat.diffuseTexture = new Texture(
+        "https://assets.babylonjs.com/environments/semihouse.png", scene,
+    )
+    // prep box faceUV for box image
+    const faceUV = [];
+    faceUV[0] = new Vector4(0.5, 0.0, 1.0, 1.0); //rear face
+    faceUV[1] = new Vector4(0.0, 0.0, 0.5, 1.0); //front face
+    faceUV[2] = new Vector4(0.25, 0, 0.5, 1.0); //right side
+    faceUV[3] = new Vector4(0.75, 0, 1.0, 1.0); //left side
+    // top 4 and bottom 5 not seen so not set
+
     const roofMat = new StandardMaterial('roofMat', scene);
     roofMat.diffuseTexture = new Texture(
         "https://assets.babylonjs.com/environments/roof.jpg", scene
     );
-    const boxMat = new StandardMaterial('boxMat', scene);
-    boxMat.diffuseTexture = new Texture(
-        "https://www.babylonjs-playground.com/textures/floor.png", scene,
-    )
 
 
     /******** World Objects ********/
+
+    buildGround(scene);
+    const box = buildBox(scene);
+    const roof = buildRoof(scene);
+
+    const house = Mesh.MergeMeshes([box, roof], true, false, undefined, false, true);
+};
+
+const buildGround = (s: Scene): Mesh => {
+    //color
+    const groundMat = new StandardMaterial("groundMat", s);
+    groundMat.diffuseColor = new Color3(0, 1, 0);
+
     const ground = MeshBuilder.CreateGround("ground", {width: 10, height: 10});
     ground.material = groundMat;
 
-    const box = MeshBuilder.CreateBox("box", {});
+    return ground;
+}
+
+const buildBox = (s: Scene): Mesh => {
+    //texture
+    const boxMat = new StandardMaterial("boxMat", s);
+    boxMat.diffuseTexture = new Texture("https://assets.babylonjs.com/environments/cubehouse.png", s)
+
+
+    //options parameter to set different images on each side
+    const faceUV = [];
+    faceUV[0] = new Vector4(0.5, 0.0, 0.75, 1.0); //rear face
+    faceUV[1] = new Vector4(0.0, 0.0, 0.25, 1.0); //front face
+    faceUV[2] = new Vector4(0.25, 0, 0.5, 1.0); //right side
+    faceUV[3] = new Vector4(0.75, 0, 1.0, 1.0); //left side
+    // top 4 and bottom 5 not seen so not set
+
+
+    /**** World Objects *****/
+    const box = MeshBuilder.CreateBox("box", {faceUV: faceUV, wrap: true});
     box.material = boxMat;
     box.position.y = 0.5;
 
-    const roof = MeshBuilder.CreateCylinder("roof", {diameter: 1.3, height: 1.5, tessellation: 3});
+    return box;
+}
+
+const buildRoof = (s: Scene): Mesh => {
+    //texture
+    const roofMat = new StandardMaterial("roofMat", s);
+    roofMat.diffuseTexture = new Texture("https://assets.babylonjs.com/environments/roof.jpg", s);
+
+    const roof = MeshBuilder.CreateCylinder("roof", {diameter: 1.3, height: 1.2, tessellation: 3});
     roof.material = roofMat;
     roof.scaling.x = 0.75;
     roof.rotation.z = Math.PI / 2;
-    roof.rotation.y = Math.PI / 2;
     roof.position.y = 1.22;
-};
+
+    return roof;
+}
 
 /**
  * Will run on every frame render.  We are spinning the box on y-axis.
