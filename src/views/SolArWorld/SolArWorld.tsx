@@ -7,7 +7,8 @@ import {
     ArcRotateCamera,
     Sound,
     StandardMaterial,
-    Color3, Texture, Vector4, Mesh
+    Color3, Texture, Vector4, Mesh,
+    SceneLoader
 } from "@babylonjs/core";
 import {SceneComponent} from "../../components/Babylon";
 import {makeStyles} from "@material-ui/core/styles";
