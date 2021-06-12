@@ -26,32 +26,43 @@ const onSceneReady = async (scene: Scene) => {
     // get a handle on the canvas to attach controls
     const canvas = scene.getEngine().getRenderingCanvas();
 
-    // create a camera and attach controls
+    /******** Set Camera and Light ********/
+        // create a camera and attach controls
     const camera = new ArcRotateCamera(
         "camera",
         -Math.PI / 2, Math.PI / 2.5, 10,
         new Vector3(0, 0, 0),
         scene
-    );
+        );
     camera.attachControl(canvas, true);
 
     // prepare a light
-    new HemisphericLight("light", new Vector3(0, 50, 0), scene);
+    new HemisphericLight("light", new Vector3(1, 1, 0), scene);
 
-    // set up the ground
-    const ground = MeshBuilder.CreateGround("ground", {width: 10, height: 10});
+    /******** Materials ********/
+        // color
     const groundMat = new StandardMaterial('groundMat', scene);
     groundMat.diffuseColor = new Color3(0, 1, 0);
-    ground.material = groundMat;
 
-    // setup some textured materials for the box and roof
+    // texture
     const roofMat = new StandardMaterial('roofMat', scene);
     roofMat.diffuseTexture = new Texture(
-        'https://storage.googleapis.com/sol-ar-world/roof.jpeg', scene
+        "https://assets.babylonjs.com/environments/roof.jpg", scene
     );
+    const boxMat = new StandardMaterial('boxMat', scene);
+    boxMat.diffuseTexture = new Texture(
+        "https://www.babylonjs-playground.com/textures/floor.png", scene,
+    )
+
+
+    /******** World Objects ********/
+        // set up the ground
+    const ground = MeshBuilder.CreateGround("ground", {width: 10, height: 10});
+    ground.material = groundMat;
 
 
     const box = MeshBuilder.CreateBox("box", {});
+    box.material = boxMat;
     box.position.y = 0.5;
     const roof = MeshBuilder.CreateCylinder("roof", {diameter: 1.3, height: 1.5, tessellation: 3});
     roof.material = roofMat;
