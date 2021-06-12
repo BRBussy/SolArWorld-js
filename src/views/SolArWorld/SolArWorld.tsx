@@ -39,12 +39,11 @@ const onSceneReady = async (scene: Scene) => {
     // prepare a light
     new HemisphericLight("light", new Vector3(1, 1, 0), scene);
 
-    /******** Materials ********/
-        // color
+    /******** Materials - Coloured ********/
     const groundMat = new StandardMaterial('groundMat', scene);
     groundMat.diffuseColor = new Color3(0, 1, 0);
 
-    // texture
+    /******** Materials - Textured ********/
     const roofMat = new StandardMaterial('roofMat', scene);
     roofMat.diffuseTexture = new Texture(
         "https://assets.babylonjs.com/environments/roof.jpg", scene
@@ -56,14 +55,13 @@ const onSceneReady = async (scene: Scene) => {
 
 
     /******** World Objects ********/
-        // set up the ground
     const ground = MeshBuilder.CreateGround("ground", {width: 10, height: 10});
     ground.material = groundMat;
-
 
     const box = MeshBuilder.CreateBox("box", {});
     box.material = boxMat;
     box.position.y = 0.5;
+
     const roof = MeshBuilder.CreateCylinder("roof", {diameter: 1.3, height: 1.5, tessellation: 3});
     roof.material = roofMat;
     roof.scaling.x = 0.75;
