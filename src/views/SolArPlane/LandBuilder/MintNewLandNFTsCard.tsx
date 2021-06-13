@@ -35,6 +35,8 @@ import limestone from 'limestone-api';
 import {DateTime} from "luxon";
 import cx from 'classnames';
 
+const AssociatedTokenProgramAccPublicKey = new PublicKey('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL');
+
 const {symbols} = limestone;
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -299,34 +301,33 @@ export function MintNewLandNFTsCard() {
         }
         setMintingInProgress(true);
         try {
-            // Process for minting nft is as follows:
-            // 1. Create a new SPL Mint with:
-            //    - supply of one
-            //    - decimals zero
-            // 2. The mint authority uses the SPL Metadata program to create metadata
+            // generate a keypair for a new SPL token mint account
+            const nftMintAccKeyPair = Keypair.generate();
 
-            // prepare data that will be required for transaction construction
-
-            // generate a set of key pairs for new nft mint and holding accounts
-            const nftMintAcc = Keypair.generate();
-            const nft1stHoldAcc = Keypair.generate();
+            // generate an associated token account for the nft mint for the new owner of this nft
+            const newNFTOwnerAccAssociatedTokenAccPublicKey = (await PublicKey.findProgramAddress(
+                [
+                    mintLandPiecesParams.nftTokenAccOwnerAccPubKey.toBuffer(),
+                    TOKEN_PROGRAM_ID.toBuffer(),
+                    nftMintAccKeyPair.publicKey.toBuffer(),
+                ],
+                AssociatedTokenProgramAccPublicKey
+            ))[0]
 
             // get required opening balances for rent exemption for nftMintAcc and nft1stHoldAcc
             const nftMintAccOpeningBal = await solanaRPCConnection.getMinimumBalanceForRentExemption(
                 MintLayout.span,
             );
-            const nft1stHoldAccOpeningBal = await Token.getMinBalanceRentForExemptAccount(
-                solanaRPCConnection
-            );
 
             // prepare instructions
             const instructions: TransactionInstruction[] = [
-
+                //
+                // NFT Mint Acc Creation and Initialisation
+                //
                 // Create the new nft mint account
-                // (Owned by the token program)
                 SystemProgram.createAccount({
                     fromPubkey: mintLandPiecesParams.nftTokenAccOwnerAccPubKey,
-                    newAccountPubkey: nftMintAcc.publicKey,
+                    newAccountPubkey: nftMintAccKeyPair.publicKey,
                     lamports: nftMintAccOpeningBal,
                     space: MintLayout.span,
                     programId: TOKEN_PROGRAM_ID,
@@ -334,50 +335,45 @@ export function MintNewLandNFTsCard() {
                 // Initialise nft mint account
                 Token.createInitMintInstruction(
                     TOKEN_PROGRAM_ID,
-                    nftMintAcc.publicKey,
+                    nftMintAccKeyPair.publicKey,
                     0,
                     mintLandPiecesParams.nftTokenAccOwnerAccPubKey,
                     mintLandPiecesParams.nftTokenAccOwnerAccPubKey,
                 ),
 
-                // Create the first nft holding account
-                // (Owned by the token program)
-                SystemProgram.createAccount({
-                    fromPubkey: mintLandPiecesParams.nftTokenAccOwnerAccPubKey,
-                    newAccountPubkey: nft1stHoldAcc.publicKey,
-                    lamports: nft1stHoldAccOpeningBal,
-                    space: AccountLayout.span,
-                    programId: TOKEN_PROGRAM_ID,
+                //
+                // NFT Holding Acc Creation and Initialisation
+                //
+                new TransactionInstruction({
+                    programId: AssociatedTokenProgramAccPublicKey,
+                    keys: [
+                        // 1st
+                        // Addresses requiring signatures are 1st, and in the following order:
+                        //
+                        // those that require write access
+                        {pubkey: mintLandPiecesParams.nftTokenAccOwnerAccPubKey, isSigner: true, isWritable: true},
+                        // those that require read-only access
+
+                        // 2nd
+                        // Addresses not requiring signatures are 2nd, and in the following order:
+                        //
+                        // those that require write access
+                        {pubkey: newNFTOwnerAccAssociatedTokenAccPublicKey, isSigner: false, isWritable: true},
+                        // those that require read-only access
+                    ]
                 }),
 
-                // Initialise first nft holding account
-                Token.createInitAccountInstruction(
-                    TOKEN_PROGRAM_ID,
-                    nftMintAcc.publicKey,
-                    nft1stHoldAcc.publicKey,
-                    // owner as assigned by token program in userspace
-                    mintLandPiecesParams.nftTokenAccOwnerAccPubKey,
-                ),
 
-                // Mint the NFT
+                //
+                // Mint the Single NFT
+                //
                 Token.createMintToInstruction(
                     TOKEN_PROGRAM_ID,
-                    nftMintAcc.publicKey,
-                    nft1stHoldAcc.publicKey,
+                    nftMintAccKeyPair.publicKey,
+                    newNFTOwnerAccAssociatedTokenAccPublicKey,
                     mintLandPiecesParams.nftTokenAccOwnerAccPubKey,
                     [],
                     1,
-                ),
-
-                // Remove mint authority to ensure that no
-                // more tokens can be produced by this mint.
-                Token.createSetAuthorityInstruction(
-                    TOKEN_PROGRAM_ID,
-                    nftMintAcc.publicKey,
-                    null,
-                    'MintTokens',
-                    mintLandPiecesParams.nftTokenAccOwnerAccPubKey,
-                    [],
                 ),
             ];
 
@@ -393,22 +389,8 @@ export function MintNewLandNFTsCard() {
                 txn = txn.add(i)
             })
 
-            // sign txn by person who will pay for this and
-            // extract the required expected signatures
-            // (wild I know - but necessary since signing overwrites :( )
-            const feePayerSig = (await solanaSelectedWallet.signTransaction(txn)).signatures[0];
-
-            // sign txn by all accounts being created and get sigs
-            txn.sign(
-                nftMintAcc,
-                nft1stHoldAcc,
-            )
-
-            // signatures back together again
-            txn.signatures = [
-                feePayerSig,
-                ...txn.signatures.slice(1)
-            ]
+            // sign txn
+            txn = await solanaSelectedWallet.signTransaction(txn);
 
             // subscribe to logs
             const subNo = solanaRPCConnection.onLogs(
