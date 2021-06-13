@@ -381,6 +381,10 @@ export function MintNewLandNFTsCard() {
                     [],
                     1,
                 ),
+
+                //
+                // Create and Initialise Metadata Account
+                //
             ];
 
             // prepare transaction to hold nft minting instructions
