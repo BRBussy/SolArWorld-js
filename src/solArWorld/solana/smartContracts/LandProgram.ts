@@ -16,7 +16,7 @@ export type MintParams = {
     //      nextYValue,
     // ], landProgramAccPublicKey)
     // Req: [writable]
-    landAssetAccountPublicKey: PublicKey;
+    landAssetAccPublicKey: PublicKey;
 
     // spl mint acc for nft
     // Req: []
@@ -26,7 +26,7 @@ export type MintParams = {
     // i.e. PDA of:
     // ([
     //      newNFTTokenAccOwnerAccPubKey, tokenProgramPubKey, nftMintAccPubKey
-    //  ], splAssociatedTokenAccountProgramID)
+    //  ], splAssociatedTokenAccProgramID)
     // Note: must hold a balance of 1 of this
     // Req: []
     newNFTOwnerAccAssociatedTokenAccPublicKey: PublicKey
