@@ -23,7 +23,7 @@ import {
     Keypair,
     LAMPORTS_PER_SOL,
     Logs, PublicKey,
-    SystemProgram,
+    SystemProgram, SYSVAR_RENT_PUBKEY,
     Transaction,
     TransactionInstruction
 } from "@solana/web3.js";
@@ -360,6 +360,11 @@ export function MintNewLandNFTsCard() {
                         // those that require write access
                         {pubkey: newNFTOwnerAccAssociatedTokenAccPublicKey, isSigner: false, isWritable: true},
                         // those that require read-only access
+                        {pubkey: mintLandPiecesParams.newNFTOwnerAccPubKey, isSigner: false, isWritable: false},
+                        {pubkey: nftMintAccKeyPair.publicKey, isSigner: false, isWritable: false},
+                        {pubkey: SystemProgram.programId, isSigner: false, isWritable: false},
+                        {pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false},
+                        {pubkey: SYSVAR_RENT_PUBKEY, isSigner: false, isWritable: false},
                     ],
                     data: undefined
                 }),
