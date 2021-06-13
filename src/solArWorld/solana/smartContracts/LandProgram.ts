@@ -9,6 +9,11 @@ export type MintParams = {
     // Req: [signer]
     newNFTTokenAccOwnerAccPubKey: PublicKey;
 
+    // The person that will pay for any rent required in
+    // the mint process.
+    // Req: [signer]
+    rentPayerAccPubKey: PublicKey;
+
     // new land asset account that is the PDA of:
     // ([
     //      'land',
