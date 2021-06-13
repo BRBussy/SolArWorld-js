@@ -9,15 +9,6 @@ export type MintParams = {
     // Req: [signer]
     newNFTTokenAccOwnerAccPubKey: PublicKey;
 
-    // spl associated token holding acc for nft
-    // i.e. PDA of:
-    // ([
-    //      newNFTOwnerPublicKey, tokenProgramPubKey, nftMintAccountPubKey
-    //  ], splAssociatedTokenAccountProgramID)
-    // Note: must hold a balance of 1 of this
-    // Req: [signer]
-    newNFTOwnerAccAssociatedTokenAccPublicKey: PublicKey
-
     // new land asset account that is the PDA of:
     // ([
     //      'land',
@@ -30,6 +21,15 @@ export type MintParams = {
     // spl mint acc for nft
     // Req: []
     nftMintAccPubKey: PublicKey;
+
+    // spl associated token holding acc for nft
+    // i.e. PDA of:
+    // ([
+    //      newNFTTokenAccOwnerAccPubKey, tokenProgramPubKey, nftMintAccPubKey
+    //  ], splAssociatedTokenAccountProgramID)
+    // Note: must hold a balance of 1 of this
+    // Req: []
+    newNFTOwnerAccAssociatedTokenAccPublicKey: PublicKey
 
     // public key of the land contract to perform mint with
     // Req: []
@@ -52,6 +52,7 @@ export const LandProgram: LandProgramSmartContract = {
                 //
                 // those that require write access
                 // those that require read-only access
+                {pubkey: params.newNFTTokenAccOwnerAccPubKey, isSigner: true, isWritable: false},
                 {pubkey: params.newNFTTokenAccOwnerAccPubKey, isSigner: true, isWritable: false},
 
                 // 2nd
