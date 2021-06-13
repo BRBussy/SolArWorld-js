@@ -8,8 +8,9 @@ import {
     Sound,
     StandardMaterial,
     Color3, Texture, Vector4, Mesh,
-    SceneLoader
+    SceneLoader, AssetsManager
 } from "@babylonjs/core";
+import '@babylonjs/loaders'
 import {SceneComponent} from "../../components/Babylon";
 import {makeStyles} from "@material-ui/core/styles";
 import {Button, Card, CardContent, Theme} from "@material-ui/core";
@@ -56,9 +57,19 @@ const onSceneReady = async (scene: Scene) => {
     );
 
     const beaconBlob = await downloadBlob(
-        'https://storage.googleapis.com/sol-ar-world/beacon.obj'
+        'https://storage.googleapis.com/sol-ar-world/HulkChickArms.stl'
     );
-    console.log('got the blobby!')
+    const beaconURL = URL.createObjectURL(beaconBlob);
+
+
+    SceneLoader.Append(
+        'https://storage.googleapis.com/sol-ar-world/HulkChickArms.stl',
+        undefined,
+        scene,
+        function (scene) {
+        // do something with the scene
+            console.log('successful?')
+    });
 
 
     /******** World Objects ********/
