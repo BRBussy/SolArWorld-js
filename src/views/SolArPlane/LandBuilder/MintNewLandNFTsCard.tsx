@@ -156,7 +156,7 @@ export function MintNewLandNFTsCard() {
 
         // do not allow going beyond max no of pieces
         if (field === 'noOfPiecesToMint') {
-            if (newValue > MAX_NO_LAND_PIECES) {
+            if (newValue > 10) {
                 return;
             }
         }
@@ -576,7 +576,7 @@ export function MintNewLandNFTsCard() {
                                             variant={'body2'}
                                             className={classes.lineItemHelperText}
                                         >
-                                            Maximum amount that can be minted at a time is {MAX_NO_LAND_PIECES}.
+                                            Maximum amount that can be minted at a time is {10}.
                                         </Typography>
                                     </div>
                                     <div className={classes.noOfPiecesLineItem}>
