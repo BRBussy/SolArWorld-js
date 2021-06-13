@@ -12,6 +12,14 @@ export type MintParams = {
     // new land asset account that is the PDA of:
     // ([
     //      'land',
+    //       landProgramAccPublicKey
+    // ], landProgramAccPublicKey)
+    // Req: [writable]
+    landPlaneAccPublicKey: PublicKey;
+
+    // new land asset account that is the PDA of:
+    // ([
+    //      'land',
     //      nextXValue,
     //      nextYValue,
     // ], landProgramAccPublicKey)
