@@ -1,6 +1,6 @@
-import {PublicKey} from "@solana/web3.js";
+import {PublicKey, TransactionInstruction} from "@solana/web3.js";
 
-export type CreateMetaDataParams = {
+export type CreateMetadataParams = {
     // nft metadata account
     // i.e. PDA of:
     // ([
@@ -27,8 +27,26 @@ export type CreateMetaDataParams = {
 
     // update authority for new metadata
     // Req: [signer]
-    nftMetaDataUpdateAuthPublicKey: PublicKey;
+    nftMetadataUpdateAuthPublicKey: PublicKey;
 
     // initial metadata account state
     Data: {};
 }
+
+export interface MetadataProgramSmartContract {
+    programID: PublicKey;
+
+    createMetadata(params: CreateMetadataParams): TransactionInstruction;
+}
+
+export const MetadataProgram: MetadataProgramSmartContract = {
+    programID: new PublicKey(''),
+    createMetadata(params: CreateMetadataParams): TransactionInstruction {
+
+        return new TransactionInstruction({
+            programId: MetadataProgram.programID,
+            keys: [],
+            data: undefined
+        });
+    }
+};
