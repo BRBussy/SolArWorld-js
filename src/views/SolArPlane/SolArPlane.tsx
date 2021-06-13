@@ -4,7 +4,7 @@ import {useHistory} from 'react-router-dom';
 import RouteType from '../../route/Route'
 import {Router} from "../../route";
 import cx from "classnames";
-import YourLand from "./YourLand";
+import LandBuilder from "./LandBuilder";
 import Explore from './Explore';
 import {SolArWorldScrollClassName} from "../../common";
 import Initialise from "./Initialise";
@@ -21,10 +21,10 @@ const useStyles = makeStyles((theme) => ({
 const solArPlaneTabRoutes: () => RouteType[] = () => {
     let routes = [
         {
-            name: 'Your Land',
-            id: 'solArPlane-your-land',
-            path: '/solArPlane/your-land',
-            component: YourLand,
+            name: 'Land Builder',
+            id: 'solArPlane-land-builder',
+            path: '/solArPlane/land-builder',
+            component: LandBuilder,
             allowSubPaths: true
         },
         {

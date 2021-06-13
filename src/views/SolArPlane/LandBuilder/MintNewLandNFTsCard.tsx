@@ -29,8 +29,7 @@ import {
 } from "@solana/web3.js";
 import {TOKEN_PROGRAM_ID, MintLayout, AccountLayout, Token} from "@solana/spl-token"
 import {
-    MAX_NO_LAND_PIECES,
-    MintLandPiecesParams
+    MintParams
 } from "../../../solArWorld/solana/smartContracts";
 import limestone from 'limestone-api';
 import {DateTime} from "luxon";
