@@ -107,6 +107,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
 }))
 
+export type MintLandPiecesParams = {
+    quadrantNo: QuadrantNo;
+    nftTokenAccOwnerAccPubKey: PublicKey;
+    noOfPiecesToMint: number;
+}
+
 export function MintNewLandNFTsCard() {
     const classes = useStyles();
     const {
