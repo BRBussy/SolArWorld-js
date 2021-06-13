@@ -66,13 +66,17 @@ export const LandProgram: LandProgramSmartContract = {
                 // those that require write access
                 // those that require read-only access
                 {pubkey: params.newNFTTokenAccOwnerAccPubKey, isSigner: true, isWritable: false},
-                {pubkey: params.newNFTTokenAccOwnerAccPubKey, isSigner: true, isWritable: false},
+                {pubkey: params.rentPayerAccPubKey, isSigner: true, isWritable: false},
 
                 // 2nd
                 // Addresses not requiring signatures are 2nd, and in the following order:
                 //
                 // those that require write access
+                {pubkey: params.landPlaneAccPublicKey, isSigner: false, isWritable: true},
+                {pubkey: params.landAssetAccPublicKey, isSigner: false, isWritable: true},
                 // those that require read-only access
+                {pubkey: params.newNFTOwnerAccAssociatedTokenAccPublicKey, isSigner: false, isWritable: false},
+                {pubkey: params.landProgramAccPublicKey, isSigner: false, isWritable: false},
             ],
             data: Buffer.from(Uint8Array.of(0, ...new BN(0).toArray("le", 8)))
         })
