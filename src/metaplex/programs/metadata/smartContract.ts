@@ -34,8 +34,6 @@ export type CreateMetadataParams = {
     Data: MetaDataAccState;
 }
 
-
-
 export interface MetadataProgramSmartContract {
     programID: PublicKey;
 
