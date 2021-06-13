@@ -390,8 +390,21 @@ export function MintNewLandNFTsCard() {
                 txn = txn.add(i)
             })
 
-            // sign txn
-            txn = await solanaSelectedWallet.signTransaction(txn);
+            // sign txn by person who will pay for this and
+            // extract the required expected signatures
+            // (wild I know - but necessary since signing overwrites :( )
+            const feePayerSig = (await solanaSelectedWallet.signTransaction(txn)).signatures[0];
+
+            // sign txn by all accounts being created and get sigs
+            txn.sign(
+                nftMintAccKeyPair
+            )
+
+            // signatures back together again
+            txn.signatures = [
+                feePayerSig,
+                ...txn.signatures.slice(1)
+            ]
 
             // subscribe to logs
             const subNo = solanaRPCConnection.onLogs(
