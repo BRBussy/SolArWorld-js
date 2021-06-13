@@ -111,7 +111,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export type MintLandPiecesParams = {
     quadrantNo: QuadrantNo;
-    nftTokenAccOwnerAccPubKey: PublicKey;
+    newNFTOwnerAccPubKey: PublicKey;
     noOfPiecesToMint: number;
 }
 
@@ -143,7 +143,7 @@ export function MintNewLandNFTsCard() {
 
         const initialMintLandPiecesParams: MintLandPiecesParams = {
             quadrantNo: QuadrantNo.One,
-            nftTokenAccOwnerAccPubKey: solanaSelectedWallet.publicKey(),
+            newNFTOwnerAccPubKey: solanaSelectedWallet.publicKey(),
             noOfPiecesToMint: 1
         }
 
@@ -189,7 +189,7 @@ export function MintNewLandNFTsCard() {
             setLoadingOwnerAccBalance(true);
             try {
                 setNewOwnerAccLamportBalance(await solanaRPCConnection.getBalance(
-                    mintLandPiecesParams.nftTokenAccOwnerAccPubKey,
+                    mintLandPiecesParams.newNFTOwnerAccPubKey,
                 ));
             } catch (e) {
                 console.error(`error getting account balance: ${e}`)
@@ -307,7 +307,7 @@ export function MintNewLandNFTsCard() {
             // generate an associated token account for the nft mint for the new owner of this nft
             const newNFTOwnerAccAssociatedTokenAccPublicKey = (await PublicKey.findProgramAddress(
                 [
-                    mintLandPiecesParams.nftTokenAccOwnerAccPubKey.toBuffer(),
+                    mintLandPiecesParams.newNFTOwnerAccPubKey.toBuffer(),
                     TOKEN_PROGRAM_ID.toBuffer(),
                     nftMintAccKeyPair.publicKey.toBuffer(),
                 ],
@@ -326,7 +326,7 @@ export function MintNewLandNFTsCard() {
                 //
                 // Create the new nft mint account
                 SystemProgram.createAccount({
-                    fromPubkey: mintLandPiecesParams.nftTokenAccOwnerAccPubKey,
+                    fromPubkey: mintLandPiecesParams.newNFTOwnerAccPubKey,
                     newAccountPubkey: nftMintAccKeyPair.publicKey,
                     lamports: nftMintAccOpeningBal,
                     space: MintLayout.span,
@@ -337,8 +337,8 @@ export function MintNewLandNFTsCard() {
                     TOKEN_PROGRAM_ID,
                     nftMintAccKeyPair.publicKey,
                     0,
-                    mintLandPiecesParams.nftTokenAccOwnerAccPubKey,
-                    mintLandPiecesParams.nftTokenAccOwnerAccPubKey,
+                    mintLandPiecesParams.newNFTOwnerAccPubKey,
+                    null,
                 ),
 
                 //
@@ -351,7 +351,7 @@ export function MintNewLandNFTsCard() {
                         // Addresses requiring signatures are 1st, and in the following order:
                         //
                         // those that require write access
-                        {pubkey: mintLandPiecesParams.nftTokenAccOwnerAccPubKey, isSigner: true, isWritable: true},
+                        {pubkey: mintLandPiecesParams.newNFTOwnerAccPubKey, isSigner: true, isWritable: true},
                         // those that require read-only access
 
                         // 2nd
@@ -360,7 +360,8 @@ export function MintNewLandNFTsCard() {
                         // those that require write access
                         {pubkey: newNFTOwnerAccAssociatedTokenAccPublicKey, isSigner: false, isWritable: true},
                         // those that require read-only access
-                    ]
+                    ],
+                    data: undefined
                 }),
 
 
@@ -371,7 +372,7 @@ export function MintNewLandNFTsCard() {
                     TOKEN_PROGRAM_ID,
                     nftMintAccKeyPair.publicKey,
                     newNFTOwnerAccAssociatedTokenAccPublicKey,
-                    mintLandPiecesParams.nftTokenAccOwnerAccPubKey,
+                    mintLandPiecesParams.newNFTOwnerAccPubKey,
                     [],
                     1,
                 ),
